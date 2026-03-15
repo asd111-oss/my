@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ИИ в ПТО — Интерактивный курс</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --navy:#0D1B2A;--navy2:#132338;--navy3:#1B3252;
+  --blue:#2563A8;--blue2:#3B82C4;
+  --amber:#E8720C;--amber2:#F59338;
+  --silver:#8BA4BE;--mist:#C8D8E8;--fog:#E8EEF5;
+  --card:#fff;--border:#D0DDE8;
+  --text:#0D1B2A;--sub:#3A5270;--hint:#6B8BAA;
+  --green:#1A7F4B;--red:#C0392B;
+  --teacher:#7B3FA0;--teacher2:#9B5FC0;
+  --r:8px;--r2:12px;--r3:16px;
+  font-family:'IBM Plex Sans',sans-serif;
+}
+html,body,#root{height:100%;background:var(--fog)}
+body{overflow:hidden}
+#root{display:flex;flex-direction:column}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-thumb{background:var(--mist);border-radius:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{opacity:0;transform:scale(.5)}70%{transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes fall{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(120px) rotate(700deg);opacity:0}}
+.fade{animation:fadeIn .25s ease both}
+/* Layout */
+.bar{background:var(--navy);height:52px;display:flex;align-items:center;padding:0 14px;gap:10px;flex-shrink:0;border-bottom:2px solid var(--amber);z-index:100;position:relative}
+.bar.t{border-bottom-color:var(--teacher)}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;letter-spacing:2px;white-space:nowrap}
+.logo span{color:var(--amber)}
+.logo.t span{color:var(--teacher2)}
+.vsep{width:1px;height:20px;background:rgba(255,255,255,.12);flex-shrink:0}
+.tabs{display:flex;gap:2px;flex:1;overflow-x:auto;padding:2px 0}
+.tab{padding:5px 12px;border-radius:6px;border:none;background:transparent;color:var(--silver);cursor:pointer;font-size:12.5px;font-weight:500;white-space:nowrap;transition:all .13s;font-family:inherit}
+.tab:hover{background:rgba(255,255,255,.08);color:#fff}
+.tab.on{background:var(--amber);color:var(--navy);font-weight:700}
+.tab.on.t{background:var(--teacher);color:#fff}
+.tab.off{opacity:.35;cursor:not-allowed}
+.rbar{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.ibtn{width:32px;height:32px;border-radius:6px;border:none;background:rgba(255,255,255,.08);color:var(--silver);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .13s}
+.ibtn:hover{background:rgba(255,255,255,.16);color:#fff}
+.pill{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.08);border-radius:20px;padding:3px 10px;font-size:11.5px;color:var(--silver)}
+.dot{width:6px;height:6px;border-radius:50%}
+/* Main layout */
+.main{display:flex;flex:1;overflow:hidden}
+.side{width:248px;flex-shrink:0;background:var(--navy2);overflow-y:auto;padding:10px 9px;border-right:1px solid rgba(255,255,255,.05)}
+.side.t{border-right-color:rgba(123,63,160,.25)}
+.content{flex:1;overflow-y:auto;padding:22px 26px}
+/* Sidebar */
+.slbl{font-size:9.5px;font-weight:700;letter-spacing:1.6px;color:var(--silver);text-transform:uppercase;padding:5px 8px 3px}
+.sitem{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:7px;cursor:pointer;transition:all .13s;color:var(--mist);font-size:12.5px;font-weight:400;border:none;background:none;width:100%;text-align:left}
+.sitem:hover{background:rgba(255,255,255,.06);color:#fff}
+.sitem.on{background:rgba(232,114,12,.16);color:#F59338;font-weight:600}
+.sitem.ton{background:rgba(123,63,160,.2);color:var(--teacher2);font-weight:600}
+.sitem.lk{opacity:.35;cursor:not-allowed}
+.sitem.lk:hover{background:none!important;color:var(--silver)!important}
+.ssep{height:1px;background:rgba(255,255,255,.05);margin:5px 0}
+/* Progress bar */
+.pbar{height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden;margin-top:5px}
+.pfill{height:100%;border-radius:3px;transition:width .5s;background:linear-gradient(90deg,var(--blue),var(--amber))}
+.pfill.t{background:linear-gradient(90deg,var(--teacher),var(--teacher2))}
+/* Cards */
+.card{background:var(--card);border-radius:14px;border:1px solid var(--border);padding:22px;margin-bottom:14px}
+.card.fog{background:var(--fog)}
+/* Module hero */
+.hero{background:linear-gradient(135deg,var(--navy),var(--navy3));border-radius:14px;padding:26px;margin-bottom:16px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.07)}
+.hero::before{content:'';position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(232,114,12,.18) 0%,transparent 70%)}
+.hbgn{position:absolute;right:22px;bottom:-6px;font-family:'Bebas Neue',sans-serif;font-size:76px;color:rgba(255,255,255,.06);line-height:1;letter-spacing:3px}
+.htag{display:inline-flex;align-items:center;gap:5px;background:var(--amber);color:var(--navy);border-radius:4px;font-size:10px;font-weight:800;padding:2px 8px;letter-spacing:.5px;margin-bottom:7px;margin-right:5px}
+.htag.done{background:var(--green);color:#fff}
+.htag.lock{background:rgba(107,139,170,.4);color:var(--mist)}
+.htag.tt{background:var(--teacher);color:#fff}
+/* Module tabs */
+.mtabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.mtab{padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--sub);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .13s;font-family:inherit}
+.mtab:hover{border-color:var(--blue2);color:var(--blue)}
+.mtab.on{background:var(--navy);border-color:var(--navy);color:#F59338;font-weight:700}
+/* Timeline */
+.tl{position:relative;padding-left:20px}
+.tl::before{content:'';position:absolute;left:6px;top:5px;bottom:5px;width:2px;background:linear-gradient(to bottom,var(--amber),var(--blue2));border-radius:2px}
+.tli{position:relative;margin-bottom:13px;padding:11px 13px;background:var(--fog);border-radius:10px;border:1px solid var(--border)}
+.tli::before{content:'';position:absolute;left:-17px;top:14px;width:10px;height:10px;border-radius:50%;background:var(--blue2);border:2px solid #fff;box-shadow:0 0 0 2px var(--blue2)}
+.tltime{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;margin-bottom:3px}
+.tltitle{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
+.tlbody{font-size:12.5px;color:var(--sub);line-height:1.6}
+/* Cases */
+.cw{border:1px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:10px;transition:box-shadow .15s}
+.cw:hover{box-shadow:0 4px 20px rgba(13,27,42,.12)}
+.ch{display:flex;align-items:center;gap:9px;padding:11px 13px;background:var(--fog);cursor:pointer}
+.cnum{width:25px;height:25px;border-radius:50%;background:var(--navy);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+.ctitle{font-size:13px;font-weight:600;color:var(--text);flex:1}
+.tbadge{font-size:11px;padding:2px 8px;border-radius:9px;font-weight:700;white-space:nowrap}
+.tc{background:#EBF2FB;color:#1E5FAD}
+.tp{background:#F3EAFB;color:#6B3FA0}
+.tg{background:#E9F7EF;color:#1A7F4B}
+.tn{background:#FDF3E7;color:#B55C00}
+.cb{padding:13px;background:var(--card);border-top:1px solid var(--border)}
+.clbl{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--hint);margin-bottom:4px}
+/* Prompt editor */
+.pw{border:2px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:12px;transition:border-color .15s}
+.pw:focus-within{border-color:var(--blue2)}
+.ph{display:flex;align-items:center;gap:8px;padding:9px 13px;background:var(--navy)}
+.pname{font-size:12.5px;font-weight:700;color:#fff;flex:1}
+.pwhen{font-size:12px;color:var(--sub);padding:7px 12px 6px;background:rgba(232,114,12,.05);border-bottom:1px solid var(--border)}
+.pta{width:100%;min-height:155px;padding:11px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.7;color:var(--text);background:var(--card);border:none;outline:none;resize:vertical}
+.pf{display:flex;align-items:center;gap:6px;padding:7px 10px;background:var(--fog);border-top:1px solid var(--border)}
+/* Buttons */
+.btn{padding:6px 12px;border-radius:7px;border:none;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .13s;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+.bp{background:var(--blue);color:#fff}
+.bp:hover{background:var(--blue2)}
+.ba{background:var(--amber);color:var(--navy)}
+.ba:hover{background:var(--amber2)}
+.bo{background:transparent;color:var(--sub);border:1.5px solid var(--border)}
+.bo:hover{border-color:var(--blue2);color:var(--blue)}
+.bg{background:transparent;color:var(--hint);padding:5px 8px}
+.bg:hover{color:var(--blue)}
+.bt{background:var(--teacher);color:#fff}
+.bt:hover{background:var(--teacher2)}
+.bdr{background:#C0392B;color:#fff}
+.bdr:hover{background:#E74C3C}
+.bsm{padding:5px 10px;font-size:12px}
+/* Test */
+.qw{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:15px;margin-bottom:10px}
+.qw.ok{border-color:var(--green)}
+.qw.no{border-color:var(--red)}
+.qnum{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);font-weight:600;margin-bottom:5px}
+.qtext{font-size:13px;font-weight:500;color:var(--text);margin-bottom:11px;line-height:1.55}
+.qopts{display:flex;flex-direction:column;gap:6px}
+.qopt{display:flex;align-items:flex-start;gap:8px;padding:8px 11px;border-radius:8px;border:1.5px solid var(--border);cursor:pointer;font-size:13px;color:var(--sub);transition:all .12s;background:var(--fog);text-align:left;width:100%;font-family:inherit;line-height:1.5}
+.qopt:hover:not([disabled]){border-color:var(--blue2);background:rgba(37,99,168,.05);color:var(--text)}
+.qopt[disabled]{cursor:default}
+.qopt.oc{border-color:var(--green);background:rgba(26,127,75,.07);color:var(--green)}
+.qopt.ow{border-color:var(--red);background:rgba(192,57,43,.07);color:var(--red)}
+.ql{width:18px;height:18px;border-radius:50%;background:var(--mist);color:var(--sub);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+.qopt.oc .ql{background:var(--green);color:#fff}
+.qopt.ow .ql{background:var(--red);color:#fff}
+.qexp{margin-top:9px;padding:9px 11px;background:rgba(26,127,75,.06);border-radius:7px;border-left:3px solid var(--green);font-size:12px;color:var(--sub);line-height:1.6}
+.pass{background:linear-gradient(135deg,var(--green),#2DA05F);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:11px;margin-top:16px}
+.fail{background:rgba(192,57,43,.07);border:1.5px solid rgba(192,57,43,.3);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:11px;margin-top:16px}
+/* Assignments */
+.aw{border:1.5px solid var(--border);border-radius:11px;overflow:hidden;margin-bottom:11px}
+.ah{padding:11px 13px;background:linear-gradient(90deg,var(--navy3),var(--navy2));display:flex;align-items:center;gap:10px}
+.ab{padding:13px;background:var(--card)}
+.cr{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;margin-bottom:5px;background:var(--fog);border:1px solid var(--border);cursor:pointer;transition:all .12s}
+.cr:hover{border-color:var(--green)}
+.cpts{width:25px;height:25px;border-radius:50%;background:var(--amber);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0}
+/* Lock screen */
+.lksc{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:360px;text-align:center;padding:32px 18px}
+.lkico{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--navy2),var(--navy3));border:2px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:16px}
+.lktitle{font-size:18px;font-weight:800;color:var(--text);margin-bottom:6px}
+.lksub{font-size:13px;color:var(--sub);line-height:1.65;max-width:360px;margin:0 auto 20px}
+.lksteps{display:flex;flex-direction:column;gap:6px;width:100%;max-width:340px;text-align:left}
+.lkstep{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:8px;background:var(--fog);border:1px solid var(--border);font-size:12.5px;color:var(--sub)}
+.lkstep.done{background:rgba(26,127,75,.06);border-color:rgba(26,127,75,.3);color:var(--green)}
+/* Celebration modal */
+.cov{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:rgba(13,27,42,.75);backdrop-filter:blur(6px)}
+.cbox{background:var(--card);border-radius:16px;padding:34px;text-align:center;max-width:390px;width:90%;animation:pop .4s cubic-bezier(.34,1.56,.64,1) both;position:relative;overflow:hidden;border:2px solid var(--green);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.confp{position:absolute;border-radius:2px;animation:fall 1.5s ease-in forwards}
+/* Overview cards */
+.ogrid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px;margin-bottom:16px}
+.mcard{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:19px;cursor:pointer;transition:all .17s;position:relative;overflow:hidden}
+.mcard:hover{border-color:var(--blue2);box-shadow:0 4px 20px rgba(13,27,42,.12);transform:translateY(-2px)}
+.mcard.lk{cursor:not-allowed;opacity:.55}
+.mcard.lk:hover{transform:none;box-shadow:none;border-color:var(--border)}
+.mcard::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.mcard.m1::before{background:linear-gradient(90deg,#2563A8,#4FA3D1)}
+.mcard.m2::before{background:linear-gradient(90deg,#E8720C,#FDB97A)}
+.mcard.m3::before{background:linear-gradient(90deg,#1A7F4B,#52C78A)}
+.mcard.m4::before{background:linear-gradient(90deg,#6B3FA0,#A87DD6)}
+.mcbgn{position:absolute;right:12px;top:8px;font-family:'Bebas Neue',sans-serif;font-size:50px;color:var(--fog);line-height:1}
+/* Auth */
+.auth{min-height:100vh;background:linear-gradient(135deg,var(--navy) 0%,#1B2A4A 50%,#2A1B5C 100%);display:flex;align-items:center;justify-content:center;padding:20px}
+.abox{background:var(--card);border-radius:16px;padding:30px;max-width:390px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);animation:pop .35s ease both}
+.ainp{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;outline:none;font-family:inherit;transition:border-color .13s;box-sizing:border-box}
+.ainp:focus{border-color:var(--blue2)}
+.ainp.err{border-color:var(--red)}
+/* Outcomes */
+.og{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:9px;margin-bottom:6px}
+.oi{display:flex;align-items:flex-start;gap:8px;background:var(--fog);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.onum{width:21px;height:21px;border-radius:50%;background:var(--amber);color:var(--navy);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;flex-shrink:0;margin-top:1px}
+/* Teacher */
+.tbadge2{background:linear-gradient(135deg,var(--teacher),var(--teacher2));color:#fff;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;letter-spacing:.5px;display:inline-block}
+.tsec{background:rgba(123,63,160,.05);border:1.5px solid rgba(123,63,160,.2);border-radius:11px;padding:13px;margin-bottom:13px}
+.tst{font-size:11.5px;font-weight:700;color:var(--teacher);letter-spacing:1px;text-transform:uppercase;margin-bottom:9px}
+.einp{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;color:var(--text);background:var(--card);outline:none;font-family:inherit;transition:border-color .13s;margin-bottom:5px;box-sizing:border-box}
+.einp:focus{border-color:var(--teacher)}
+.eta{width:100%;padding:9px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;color:var(--text);background:var(--card);outline:none;font-family:inherit;resize:vertical;min-height:75px;transition:border-color .13s;margin-bottom:5px;line-height:1.6;box-sizing:border-box}
+.eta:focus{border-color:var(--teacher)}
+/* Users table */
+.utable{width:100%;border-collapse:collapse;font-size:13px}
+.utable th{padding:8px 10px;text-align:left;background:var(--fog);border-bottom:2px solid var(--border);font-weight:700;color:var(--sub);font-size:11px;letter-spacing:.5px;white-space:nowrap}
+.utable td{padding:9px 10px;border-bottom:1px solid var(--border)}
+.utable tr:hover td{background:rgba(123,63,160,.04)}
+/* Utils */
+.chip{font-size:11px;font-weight:600;padding:2px 8px;border-radius:9px}
+.cb1{background:#EBF2FB;color:#1E5FAD}
+.cb2{background:#FDF3E7;color:#B55C00}
+.cb3{background:#E9F7EF;color:#1A7F4B}
+.cb4{background:#F3EAFB;color:#6B3FA0}
+.ccdone{background:linear-gradient(135deg,#1B3252,#0D2A1B);border:2px solid var(--green);border-radius:14px;padding:24px;text-align:center;margin-bottom:16px;position:relative;overflow:hidden}
+.ccdone::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(26,127,75,.2) 0%,transparent 65%)}
+.pbarh{height:5px;background:var(--mist);border-radius:3px;overflow:hidden}
+.pbarfill{height:100%;border-radius:3px;transition:width .5s cubic-bezier(.4,0,.2,1);background:linear-gradient(90deg,var(--blue),var(--amber))}
+@media(max-width:800px){.ogrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+const TOOLS={
+  claude:{name:'Claude.ai',cls:'tool-claude',dot:'#2563A8'},
+  perplexity:{name:'Perplexity AI',cls:'tool-perplexity',dot:'#6B3FA0'},
+  gemini:{name:'Gemini',cls:'tool-gemini',dot:'#1A7F4B'},
+  notebook:{name:'NotebookLM',cls:'tool-notebook',dot:'#B55C00'},
+  combo:{name:'Claude.ai + Perplexity AI',cls:'tool-combo',dot:'#2563A8'},
+};
+
+const MODULES=[
+{
+  id:'m1',num:1,colorClass:'m1',
+  title:'Первый контакт',
+  subtitle:'Промт-инжиниринг для ПТО',
+  goal:'Дать рабочее понимание принципов промт-инжиниринга и практические навыки применения Claude.ai и Perplexity AI для ежедневных задач ПТО.',
+  duration:'2 часа',
+  tools:['claude','perplexity'],
+  outcomes:[
+    'Понимает, чем нейросети полезны именно для ПТО, и может объяснить коллегам',
+    'Умеет формулировать промт по структуре: Роль → Контекст → Задача → Формат → Ограничения',
+    'Отличает «слабый» промт от «сильного» и самостоятельно его улучшает',
+    'Получает черновик делового письма за 3–5 минут через Claude.ai',
+    'Проверяет актуальность ГОСТ/СП через Perplexity AI',
+    'Знает и применяет защиту от галлюцинаций нейросетей',
+    'Имеет личный набор из 5–7 промт-шаблонов под задачи своего ПТО',
+  ],
+  plan:[
+    {time:'0:00–0:15',title:'Вводная часть',body:'Знакомство с форматом. Опрос: кто пробовал нейросети? Демонстрация «вау-момента»: черновик письма заказчику за 90 секунд в реальном времени.'},
+    {time:'0:15–0:35',title:'Как устроены нейросети — только то, что важно для ПТО',body:'Принцип работы LLM без теории. Карта инструментов курса (Claude / Perplexity / NotebookLM / Gemini). Демонстрация разницы слабого и сильного промта на живом примере.'},
+    {time:'0:35–1:05',title:'Промт-инжиниринг для ПТО: структура РКТФО',body:'Разбор формулы: Роль → Контекст → Задача → Формат → Ограничения. Живой пример: письмо субподрядчику по срыву сроков. Итерация через диалог. Защита от галлюцинаций: правила и демонстрация.'},
+    {time:'1:05–1:45',title:'Практика с реальными задачами',body:'Слушатели работают самостоятельно на своих устройствах. 2–3 кейса с разбором. Сравнение «эталонного» и собственного промтов.'},
+    {time:'1:45–2:00',title:'Итоги, домашнее задание, тест',body:'Резюме: 5 правил. Выдача шпаргалки РКТФО + 5 промт-шаблонов. Анонс ДЗ и теста.'},
+  ],
+  cases:[
+    {title:'Письмо заказчику по замечанию технадзора',tool:'claude',
+     situation:'Технадзор зафиксировал защитный слой арматуры перекрытия 7-го этажа 15 мм вместо 20 мм по проекту. Нужно официальное письмо: факт признаётся, готовятся мероприятия.',
+     goal:'За 5 минут получить черновик официального письма с правильным деловым стилем.',
+     prompt:`Роль: Ты — начальник ПТО генподрядчика ООО "СтройГрупп".
+
+Контекст: Объект — жилой дом 24 эт., г. Екатеринбург. Заказчик — ООО "УралДевелопмент". Технадзор зафиксировал несоответствие: защитный слой арматуры перекрытия 7-го этажа составил 15 мм вместо 20 мм по проекту (СП 63.13330.2022). Акт замечания ТН-147 получен сегодня.
+
+Задача: Напиши официальное письмо заказчику:
+1) Подтверждаем получение акта ТН-147
+2) Факт принимается к рассмотрению
+3) В течение 5 р/дней предоставим мероприятия по устранению
+4) Работы на участке приостановлены
+
+Формат: Официальное деловое письмо. Шапка, вводный абзац, 4 пункта, заключительная фраза, место для подписи.
+
+Ограничения: Тон — уважительный, деловой. Нормативная ссылка только СП 63.13330.2022. Объём — до 1 страницы.`},
+    {title:'Проверка актуальности норматива через Perplexity',tool:'perplexity',
+     situation:'При подготовке ППР в старом шаблоне обнаружена ссылка на СП 48.13330.2011. Нужно быстро проверить: актуален ли этот документ?',
+     goal:'Мгновенная проверка актуальности без ручного поиска на docs.cntd.ru.',
+     prompt:`Проверь актуальность строительного норматива СП 48.13330.2011 "Организация строительства" по состоянию на сегодняшний день.
+
+Ответь:
+1) Действует ли он в исходной редакции?
+2) Есть ли более новая редакция?
+3) Если заменён — укажи номер, название, дату введения.
+
+Источники: только официальные (minstroyrf.ru, docs.cntd.ru).`},
+    {title:'Чек-лист приёмки скрытых работ',tool:'claude',
+     situation:'Через 2 дня — приёмка гидроизоляции подземной части жилого квартала в Краснодаре. Молодой инженер ПТО впервые ведёт этот вид работ.',
+     goal:'Получить профессиональный чек-лист для подготовки к приёмке за 5 минут.',
+     prompt:`Роль: Ты — опытный начальник ПТО с 15-летним стажем в жилом строительстве.
+
+Контекст: Объект — жилой квартал, Краснодар. Приёмка оклеечной гидроизоляции подземной части (Техноэласт). Субподрядчик выполнял работы.
+
+Задача: Составь чек-лист для приёмки. Включи:
+1) Документы субподрядчика
+2) Визуальные и измерительные проверки
+3) Типичные дефекты
+4) Что фиксировать в АОСР
+
+Формат: Нумерованный список по разделам. Одно действие — одна строка.
+
+Ограничения: Нормативные ссылки — только если уверен в номере. Иначе пиши [нормативная ссылка — уточнить].`},
+  ],
+  assignments:[
+    {title:'Задание 1.1 — Мой первый рабочий промт',
+     goal:'Применить структуру РКТФО к реальной задаче из своей практики.',
+     description:'Выбрать задачу из текущей работы (письмо, чек-лист, объяснение). Заполнить таблицу РКТФО, сформулировать промт, запустить в Claude.ai, оценить по чек-листу, внести итерации.',
+     criteria:[
+       {text:'Все 5 элементов РКТФО присутствуют в промте',pts:3},
+       {text:'Результат нейросети соответствует задаче',pts:2},
+       {text:'Слушатель внёс минимум 1 осмысленную итерацию',pts:2},
+       {text:'Нормативные ссылки проверены / помечены [ПРОВЕРИТЬ]',pts:1},
+       {text:'Промт добавлен в личный банк шаблонов',pts:2},
+     ]},
+    {title:'Задание 1.2 — Поймай галлюцинацию',
+     goal:'Выработать навык критической проверки AI-контента на ложные нормативные ссылки.',
+     description:'Слушатель получает черновик раздела ППР (300–400 слов) с 3 намеренными ошибками: несуществующий ГОСТ, устаревший СП, неверный технический параметр. Нужно их найти и исправить.',
+     criteria:[
+       {text:'Все 3 ошибки выявлены',pts:6},
+       {text:'Для каждой ошибки дано объяснение',pts:3},
+       {text:'Текст исправлен корректно',pts:3},
+       {text:'Использован Perplexity AI для проверки норм',pts:2},
+     ]},
+  ],
+  questions:[
+    {q:'Что такое «галлюцинация» нейросети применительно к задачам ПТО?',
+     opts:['Сбой в работе интерфейса нейросети','Генерация правдоподобного, но ложного контента — например, несуществующего ГОСТа','Слишком длинный ответ нейросети','Отказ нейросети отвечать на вопрос'],
+     correct:1,
+     explain:'Нейросеть не «знает» правду — она генерирует статистически вероятный текст. Она может уверенно назвать несуществующий ГОСТ. Все нормативные ссылки из AI-документов обязательно проверяются.'},
+    {q:'Какой инструмент лучше всего подходит для проверки актуальности СП на текущий момент?',
+     opts:['Claude.ai — он обучен на строительных нормативах','Google-поиск вручную','Perplexity AI — ищет актуальную информацию в интернете с указанием источников','NotebookLM'],
+     correct:2,
+     explain:'Claude.ai имеет дату отсечки и может не знать последних изменений. Perplexity AI ищет в реальном времени и даёт ссылки на официальные источники.'},
+    {q:'Правильный порядок элементов структуры промта РКТФО:',
+     opts:['Роль → Задача → Контекст → Ограничения → Формат','Роль → Контекст → Задача → Формат → Ограничения','Задача → Контекст → Роль → Формат → Ограничения','Контекст → Роль → Задача → Ограничения → Формат'],
+     correct:1,
+     explain:'Нейросеть сначала понимает кто она (Роль), затем в какой ситуации (Контекст), затем что делать (Задача), как оформить (Формат) и чего избегать (Ограничения).'},
+    {q:'Что означает принцип «четырёх глаз» в контексте использования ИИ в ПТО?',
+     opts:['Использовать 4 разных нейросети для одной задачи','Любой AI-документ перед подписанием проверяют минимум два специалиста','Читать каждый документ четыре раза перед отправкой','Проверять нормативные ссылки по четырём источникам'],
+     correct:1,
+     explain:'Принцип «четырёх глаз» — стандарт контроля качества для AI-контента. Когда документ проверяют два специалиста независимо, вероятность пропустить ошибку существенно снижается.'},
+    {q:'Правильная инструкция для нейросети по нормативным ссылкам:',
+     opts:['«Найди подходящие ГОСТы и СП самостоятельно»','«Если не знаешь точной нормативной ссылки — напиши [ПРОВЕРИТЬ] вместо неё, не придумывай»','«Доверяю нормативным ссылкам нейросети»','«Не упоминай нормативы вообще»'],
+     correct:1,
+     explain:'Конструкция [ПРОВЕРИТЬ] заставляет нейросеть явно обозначать пробелы вместо их заполнения выдуманными данными.'},
+    {q:'Начальник ПТО получил черновик письма с фразой: «В соответствии с ГОСТ Р 57260-2016…». Правильное действие:',
+     opts:['Оставить как есть — нейросеть обучена на актуальных нормативах','Удалить ссылку — в письмах нормативы не нужны','Проверить существование и актуальность ГОСТ Р 57260-2016 через Perplexity AI или docs.cntd.ru','Заменить на СП 63.13330.2022 — он точно актуален'],
+     correct:2,
+     explain:'ГОСТ Р 57260-2016 в данном примере — выдуманный номер (галлюцинация). Правило: любую нормативную ссылку из AI-текста проверяем до подписания.'},
+    {q:'Выберите лучший вариант промта для претензионного письма субподрядчику по задержке монтажа:',
+     opts:['«Напиши претензию субподрядчику по задержке работ»','«Ты — начальник ПТО. Субподрядчик ООО "МеталлМонтаж". Отставание 8 дней по монтажу металлоконструкций. Требую скорректированный график за 3 дня. Деловой тон, ссылка на санкции 0,1%/день. 1 страница.»','«Помоги написать письмо, у меня подрядчик задержал работы, мы недовольны»','«Составь документ для подрядчика о нарушении сроков»'],
+     correct:1,
+     explain:'Вариант Б содержит все необходимые элементы РКТФО: роль, контекст (кто, что, сколько дней), конкретное требование, срок, тон и формат.'},
+    {q:'Какой из инструментов лучше всего подходит для составления текстовых разделов ППР?',
+     opts:['Perplexity AI — поисковик с актуальными данными','Claude.ai — генерация структурированных текстов по описанию','NotebookLM — анализ загруженных PDF','Gemini — обработка видеозаписей'],
+     correct:1,
+     explain:'Claude.ai наиболее эффективен для генерации структурированных текстов: ОПЗ, разделы ОТ и ПБ, технологические карты — всё это текстовые задачи.'},
+  ],
+  prompts:[
+    {id:'p1_1',name:'Универсальное деловое письмо',tool:'claude',
+     when:'Любое официальное письмо: заказчику, технадзору, субподрядчику',
+     text:`Роль: Ты — [должность: начальник ПТО / инженер ПТО] генподрядчика [название].
+
+Контекст:
+- Объект: [название, город, тип: жилой / промышленный]
+- Адресат: [название организации, должность]
+- Ситуация: [кратко — что произошло]
+- Ключевые факты: [даты, номера документов]
+
+Задача: Напиши официальное [уведомление / запрос / претензия / ответ]:
+1) [Первый смысловой блок]
+2) [Второй смысловой блок]
+3) [Требование / просьба]
+4) [Срок ответа / следующий шаг]
+
+Формат: Официальное письмо. Шапка, вводный абзац, основная часть, заключение, подпись. До [1/2] страниц.
+
+Ограничения:
+- Тон: [официальный / нейтральный / мягко-официальный]
+- Нормативные ссылки: только [перечислить точные], остальные → [ПРОВЕРИТЬ]`},
+    {id:'p1_2',name:'Чек-лист приёмки / проверки',tool:'claude',
+     when:'Подготовка к приёмке скрытых работ, входному контролю, проверке субподрядчика',
+     text:`Роль: Ты — опытный [начальник ПТО / производитель работ] с большим опытом в [тип строительства].
+
+Контекст:
+- Объект: [описание]
+- Вид работ: [конкретный вид: гидроизоляция / монолит / кровля]
+- Стадия: [выполнение / приёмка / скрытые работы]
+- Материалы/системы: [если известны]
+
+Задача: Составь профессиональный чек-лист для [приёмки / проверки]. Включи:
+1) Документы субподрядчика
+2) Визуальные проверки
+3) Измерительные проверки
+4) Типичные дефекты
+5) Что зафиксировать в акте
+
+Формат: Нумерованный список по разделам. Одно действие — одна строка.
+Ограничения: Неточные ссылки → [нормативная ссылка — уточнить]`},
+    {id:'p1_3',name:'Проверка актуальности норматива',tool:'perplexity',
+     when:'Перед включением любого ГОСТ / СП / ПП РФ в ИД, ППР или письмо',
+     text:`Проверь актуальность [номер и название СП/ГОСТ] по состоянию на сегодняшний день ([месяц/год]).
+
+1) Действует ли в исходной редакции?
+2) Вносились ли изменения? Когда и какие?
+3) Есть ли более новая редакция? Номер, название, дата.
+4) Чем заменён, если отменён?
+
+Источники: только официальные — minstroyrf.ru, docs.cntd.ru, publication.pravo.gov.ru.`},
+  ],
+},
+{
+  id:'m2',num:2,colorClass:'m2',
+  title:'Коммерческая смета',
+  subtitle:'От ТЗ до финального файла',
+  goal:'Научить составлять коммерческую смету на СМР с нуля — на основе ТЗ, эскиза или описания — с применением Claude.ai и Perplexity AI как поисковика расценок.',
+  duration:'2 часа',
+  tools:['claude','perplexity','gemini'],
+  outcomes:[
+    'Составляет промт для Claude.ai, по которому формируется смета с правильной структурой и столбцом комментариев',
+    'Указывает в промте источники цен: прайс компании или сайты поставщиков',
+    'Выстраивает связку Claude + Perplexity: Claude строит структуру, Perplexity ищет расценки',
+    'Задаёт формат сметы: столбцы, разбивку по разделам, итоги по разделам, НДС',
+    'Использует столбец «Примечание» как инструмент обоснования перед заказчиком',
+    'Понимает ограничения: Claude не проверяет объёмы по чертежам',
+  ],
+  plan:[
+    {time:'0:00–0:10',title:'Разминка и контекст',body:'Опрос: сколько времени уходит на коммерческую смету вручную? Демонстрация: ТЗ на 7 помещений → смета 73 позиции за одну сессию в Claude.'},
+    {time:'0:10–0:40',title:'Анализ чужих смет и быстрый разбор (Gemini)',body:'Что ИИ делает хорошо с готовой сметой. Live-демо: загрузка Excel-таблицы в Gemini, поиск завышений и задвоений. Шаблон ответа на замечания заказчика по смете.'},
+    {time:'0:40–1:35',title:'Главный блок: коммерческая смета из ТЗ',body:'Архитектура промта из 9 блоков (А-И). Полный промт «Смета СМР из ТЗ» — пошаговый разбор в реальном времени. Связка Claude + Perplexity: промты для поиска расценок по региону. Подстановка найденных цен обратно в Claude.'},
+    {time:'1:35–1:50',title:'Практика слушателей',body:'Самостоятельная работа с ТЗ (своим или учебным). Проверка результата по чек-листу. Разбор 2–3 результатов вживую.'},
+    {time:'1:50–2:00',title:'Итоги и домашнее задание',body:'Карточка «Смета через ИИ — схема работы». Анонс ДЗ и теста.'},
+  ],
+  cases:[
+    {title:'Смета на ремонт офисов по ТЗ (ключевой кейс)',tool:'claude',
+     situation:'Реконструкция офисов охраны, 7 помещений, ~87 м². Заказчик прислал ТЗ на 4 страницах. Срок подачи ТКП — 3 рабочих дня. Смета только на СМР (без материалов).',
+     goal:'73 позиции с разбивкой по помещениям, расценками и комментариями за одну сессию.',
+     prompt:`Роль: Ты — опытный инженер-сметчик подрядной организации.
+
+Объект: реконструкция офисов охраны, г. Калуга, 2026 год.
+Смета ТОЛЬКО на работы (без материалов).
+
+=== ТЕХНИЧЕСКОЕ ЗАДАНИЕ ===
+[ВСТАВИТЬ ПОЛНЫЙ ТЕКСТ ТЗ]
+=== КОНЕЦ ТЗ ===
+
+СТРУКТУРА ТАБЛИЦЫ (8 столбцов):
+№п/п | Раздел | Наименование работ | Ед.изм. | Кол-во | Цена за ед. (без НДС) | Стоимость (без НДС) | Примечание
+
+ПРАВИЛА: Все работы из ТЗ. Демонтаж — отдельно. Монтаж нового = 2 позиции.
+РАСЦЕНКИ: Среднерыночные для Калуги, 2026 год.
+ИТОГИ: После раздела + общий итог + НДС 20%.
+ПРИМЕЧАНИЕ: Заполнять для КАЖДОЙ позиции (материал, обоснование, расчёт объёма).
+ОГРАНИЧЕНИЯ: Неизвестные объёмы → [уточнить]. Нормативы без номера → не придумывай.`},
+    {title:'Поиск расценок через Perplexity AI',tool:'perplexity',
+     situation:'Смета готова, но колонка расценок заполнена [РАСЦЕНКА — УТОЧНИТЬ]. Нужно быстро найти актуальные рыночные цены по Калуге.',
+     goal:'Найти расценки по конкретным видам отделочных работ в регионе за 10 минут.',
+     prompt:`Найди актуальные рыночные расценки на следующие виды отделочных работ в г. Калуга на [месяц/год]:
+
+1) Укладка керамической плитки на пол — руб./м²
+2) Шпатлёвка стен + грунтовка + окраска в 2 слоя — руб./м²
+3) Устройство подвесного потолка «грильято» — руб./м²
+4) Монтаж встраиваемого светильника 600×600 мм — руб./шт.
+
+Ориентир: подрядчик среднего сегмента (не демпинг, не премиум).
+Источники: сайты подрядных организаций, youdo.com, profi.ru, открытые прайсы.
+Для каждой позиции: диапазон цен (мин–макс) + средняя + ссылки.`},
+    {title:'Смета из описания без ТЗ',tool:'claude',
+     situation:'Частный заказчик просит оценить ремонт без ТЗ: только описание по телефону — «заменить пол, покрасить стены, поставить подвесной потолок». Помещение ~25 м², высота 3 м.',
+     goal:'Ориентировочная смета для быстрого КП по минимальным данным.',
+     prompt:`Роль: Ты — инженер-сметчик подрядной организации.
+
+Помещение: офис ~25 м², высота 3 м, г. Москва, 2026 год.
+Заказчик хочет:
+- Демонтаж старого напольного покрытия
+- Укладка ламината 31 класс
+- Шпатлёвка + грунтовка + окраска стен в 2 слоя
+- Демонтаж старого потолка
+- Потолок типа «Армстронг»
+- Монтаж 4 светильников 600×600 мм
+
+Объёмы — рассчитай из данных помещения (форма квадрата ~5×5 м, 1 стандартный проём).
+
+Структура таблицы: № / Наименование / Ед.изм. / Кол-во / Цена (без НДС) / Стоимость / Примечание
+Расценки: среднерыночные для Москвы, 2026 год.
+Итоги: без НДС + НДС 20% + с НДС.
+Допущения помечай [предположение — уточнить у заказчика].`},
+  ],
+  assignments:[
+    {title:'Задание 2.1 — Смета из ТЗ',
+     goal:'Составить коммерческую смету на СМР с помощью Claude.ai на основании ТЗ.',
+     description:'Заполнить промт-шаблон «Смета из ТЗ» по структуре (роль, контекст, ТЗ, структура таблицы, источник расценок, требования к примечаниям). Вставить ТЗ и запустить в Claude.ai. Проверить по чек-листу. Перенести в Excel.',
+     criteria:[
+       {text:'Промт содержит все ключевые блоки (роль, ТЗ, структура таблицы, примечания)',pts:5},
+       {text:'Все позиции ТЗ отражены, нет пропусков',pts:3},
+       {text:'Столбец «Примечание» заполнен для каждой позиции',pts:2},
+       {text:'Итоги по разделам + общий итог + НДС',pts:2},
+       {text:'Внесена минимум 1 осмысленная итерация',pts:2},
+     ]},
+    {title:'Задание 2.2 — Расценки через Perplexity',
+     goal:'Освоить поиск актуальных расценок и подстановку их в смету.',
+     description:'Взять смету из задания 2.1 с пометками [РАСЦЕНКА — УТОЧНИТЬ]. Сформировать 2–3 запроса в Perplexity по группам работ. Передать найденные расценки в Claude и обновить смету.',
+     criteria:[
+       {text:'Минимум 2 запроса в Perplexity с указанием региона и периода',pts:3},
+       {text:'Расценки переданы в Claude корректным промтом',pts:3},
+       {text:'Смета обновлена с актуальными расценками',pts:2},
+       {text:'Зафиксирована разница между расценкой Claude и Perplexity',pts:2},
+     ]},
+  ],
+  questions:[
+    {q:'Какой инструмент лучше всего подходит для составления коммерческой сметы по тексту ТЗ?',
+     opts:['Gemini — он лучше работает с таблицами','Perplexity AI — ищет актуальную информацию','Claude.ai — лучший инструмент для генерации структурированных таблиц по описанию','Excel с макросами'],
+     correct:2,
+     explain:'Claude.ai наиболее эффективен для задачи «прочитать ТЗ → сформировать структурированную таблицу со всеми позициями». Gemini лучше для анализа готовых таблиц.'},
+    {q:'Какую роль Perplexity AI выполняет в связке «Claude + Perplexity» при составлении сметы?',
+     opts:['Составляет структуру сметы','Форматирует таблицу в Excel','Ищет актуальные рыночные расценки и цены по конкретному региону','Проверяет правильность объёмов'],
+     correct:2,
+     explain:'Perplexity ищет в реальном времени. Claude имеет дату отсечки и не знает текущих рыночных цен. Связка: Claude строит → Perplexity ищет цены → Claude финализирует.'},
+    {q:'В промте для составления сметы указано: «Стоимость материалов не включай». Что это означает?',
+     opts:['Смета составляется только на часть работ','Смета отражает только стоимость выполнения работ — материалы закупает заказчик','Нейросеть не умеет считать стоимость материалов','Ошибка — смета всегда должна включать материалы'],
+     correct:1,
+     explain:'Разделение «смета на работы» и «с материалами» — стандартная практика. Важно явно указывать это в промте, иначе Claude по умолчанию может включить материалы.'},
+    {q:'Что нужно сделать, если в ТЗ указан демонтаж существующего оборудования перед монтажом нового?',
+     opts:['Указать только монтаж — демонтаж входит в стоимость','Включить демонтаж отдельной позицией, отдельно от монтажа нового','Объединить демонтаж и монтаж в одну позицию','Уточнить у заказчика'],
+     correct:1,
+     explain:'Демонтаж — отдельный вид работ со своей трудоёмкостью и расценкой. Объединение с монтажом лишает возможности обоснованно оценить каждый этап.'},
+    {q:'Для чего используется столбец «Примечание / Комментарий» в коммерческой смете?',
+     opts:['Только для указания производителя материалов','Для указания материала, обоснования расценки, расчёта объёма и защиты позиции перед заказчиком','Для подписи сметчика','Только для нормативных ссылок'],
+     correct:1,
+     explain:'Столбец «Примечание» — инструмент прозрачности. Он переводит смету из «чёрного ящика» в понятный документ, каждую позицию которого можно объяснить заказчику.'},
+    {q:'Claude составил смету и проставил расценки. Нужно ли их проверять?',
+     opts:['Нет — Claude обучен на строительных данных','Нет — расценки стандартные','Да — Claude имеет дату отсечки, расценки верифицируем через Perplexity или свой прайс','Только если заказчик попросит обоснование'],
+     correct:2,
+     explain:'Ни один LLM не имеет доступа к актуальным рыночным данным в реальном времени. Расценки от Claude — данные на момент обучения. Всегда верифицировать.'},
+    {q:'Какой вариант промта для Perplexity даст более точный результат при поиске расценок?',
+     opts:['«Сколько стоит укладка плитки?»','«Найди расценки на укладку плитки на пол в Екатеринбурге на январь 2026. Источники: youdo.com, profi.ru. Укажи диапазон и среднюю цену с ссылками.»','«Расценки на строительные работы»','«Плитка Екатеринбург цена»'],
+     correct:1,
+     explain:'Чем точнее запрос (вид работы, регион, период, источники), тем надёжнее результат. Общий запрос без региона даст диапазон по всей России.'},
+    {q:'Инженер ПТО вставил ТЗ в Claude и получил смету на 45 позиций, хотя вручную насчитал 55. Что делать?',
+     opts:['Добавить в промт: «Каждый вид работы из ТЗ = отдельная позиция, ни одну не пропускай» и повторить','Принять как есть — Claude исключил лишние позиции правильно','Переключиться на Gemini','Claude допустил арифметическую ошибку — пересчитать вручную'],
+     correct:0,
+     explain:'Claude может «схлопывать» похожие виды работ или пропускать мелкие пункты ТЗ. Решение — явное требование в промте и итерационная проверка количества позиций.'},
+  ],
+  prompts:[
+    {id:'p2_1',name:'Коммерческая смета СМР из ТЗ — мастер',tool:'claude',
+     when:'Составить смету по ТЗ / описанию объекта / перечню работ',
+     text:`Роль: Ты — опытный инженер-сметчик строительной подрядной организации.
+
+Объект: [название и краткое описание]
+Заказчик: [название]    Регион: [город, регион]
+Цены актуальны на: [месяц / год]
+
+=== ТЕХНИЧЕСКОЕ ЗАДАНИЕ ===
+[ВСТАВИТЬ ПОЛНЫЙ ТЕКСТ ТЗ]
+=== КОНЕЦ ТЗ ===
+
+СОСТАВ РАБОТ:
+Включи ВСЕ виды работ из ТЗ. Демонтаж — отдельной позицией.
+Монтаж нового взамен старого — двумя позициями (демонтаж + монтаж).
+Вывоз мусора — отдельной позицией в конце.
+Материалы: [«не включать» / «включить — источники ниже»]
+
+СТРУКТУРА ТАБЛИЦЫ (8 столбцов):
+№п/п | Раздел | Наименование вида работ | Ед.изм. |
+Кол-во | Цена за ед., руб. (без НДС) |
+Стоимость, руб. (без НДС) | Примечание / Комментарий
+
+ИСТОЧНИК РАСЦЕНОК: [выбери вариант]
+А) Рыночные цены для [регион], [год], средний ценовой сегмент
+Б) Наш прайс-лист: [вставить прайс]
+В) Проставить [РАСЦЕНКА — УТОЧНИТЬ] — заполню через Perplexity
+
+ИТОГИ: После каждого раздела «ИТОГО по разделу [название]»
+В конце: ИТОГО без НДС / НДС 20% / ИТОГО с НДС
+
+ТРЕБОВАНИЯ К «ПРИМЕЧАНИЮ»: Заполнять для КАЖДОЙ позиции:
+• Применяемый материал (марка / стандарт)
+• Обоснование нетипичной расценки
+• Как рассчитан объём (если не из ТЗ напрямую)
+
+ОГРАНИЧЕНИЯ: Неизвестные объёмы → [уточнить].
+Нормативы без номера → не придумывай.
+Формат: таблица Markdown для переноса в Excel.`},
+    {id:'p2_2',name:'Поиск расценок на работы',tool:'perplexity',
+     when:'Найти рыночные расценки по видам работ в конкретном регионе',
+     text:`Найди актуальные рыночные расценки на следующие виды
+[строительных / монтажных / отделочных] работ
+в регионе [город / область] на [месяц и год]:
+
+1) [Вид работ 1] — руб./[ед.изм.]
+2) [Вид работ 2] — руб./[ед.изм.]
+3) [Вид работ 3] — руб./[ед.изм.]
+
+Ориентир: подрядчик среднего ценового сегмента (не демпинг, не премиум).
+Источники: сайты подрядных организаций, youdo.com, profi.ru, открытые прайсы.
+
+Для каждой позиции: диапазон цен (мин–макс) + средняя + ссылки на источники.`},
+    {id:'p2_3',name:'Подстановка расценок из Perplexity в смету',tool:'claude',
+     when:'После поиска цен через Perplexity — заполнить пустые ячейки сметы',
+     text:`Возвращаюсь к смете по объекту [название].
+Вот актуальные расценки из открытых источников для региона [регион], [месяц/год]:
+
+[Вид работ 1]: [X] руб./[ед.изм.] (источник: [ссылка])
+[Вид работ 2]: [X] руб./[ед.изм.]
+[Вид работ 3]: [X] руб./[ед.изм.]
+
+Задача: Подставь расценки вместо [РАСЦЕНКА — УТОЧНИТЬ].
+Пересчитай стоимость по позициям и обнови итоговые строки.
+В «Примечании» добавь: «Расценка: рыночный мониторинг [месяц/год]».
+Выдай обновлённую таблицу.`},
+  ],
+},
+{
+  id:'m3',num:3,colorClass:'m3',
+  title:'ИД и ППР',
+  subtitle:'От черновика до подписания',
+  goal:'Освоить подготовку исполнительной документации (АОСР, журналы, реестры) и разделов ППР/ПОС/ТК с помощью Claude.ai и NotebookLM с сохранением нормативной корректности.',
+  duration:'2 часа',
+  tools:['claude','perplexity','notebook'],
+  outcomes:[
+    'Подготавливает черновик АОСР по форме РД 11-02-2006 под любой вид скрытых работ',
+    'Использует NotebookLM для анализа томов ПД: поиск требований, сравнение версий',
+    'Формирует структуру и текстовые разделы ППР (ОПЗ, ОТ, ПБ) через Claude.ai',
+    'Составляет технологическую карту с структурой, СОКК и требованиями ОТ',
+    'Применяет Perplexity AI для проверки актуальности нормативов в ИД и ППР',
+    'Применяет принцип «четырёх глаз» для ИД: проверка двумя специалистами',
+  ],
+  plan:[
+    {time:'0:00–0:10',title:'Разминка и актуализация',body:'Опрос: сколько времени уходит на срочный пакет ИД? Ключевой посыл: ИИ даёт черновик, вы даёте профессиональную ответственность.'},
+    {time:'0:10–0:35',title:'NotebookLM: анализ проектной документации',body:'Что умеет NotebookLM для ПТО. Live-демо: загрузка тома ПД, поиск требований к параметрам, перечень скрытых работ, сравнение версий чертежей. Практика: слушатели задают 2–3 вопроса учебному документу.'},
+    {time:'0:35–1:10',title:'Исполнительная документация через Claude',body:'Состав пакета ИД — что делает ИИ, что не делает. Live-демо: полный промт АОСР на армирование перекрытия. Техника «шапка для серии АОСР». Промты для записи в журнал, сопроводительного письма, реестра ИД.'},
+    {time:'1:10–1:45',title:'ППР и ТК: структура и текстовые разделы',body:'Карта разделов ППР: что генерирует ИИ, что делает инженер. Live-демо: ОПЗ к ППР. Технологическая карта: структура из 6 разделов включая СОКК. Проверка нормативов ОТ через Perplexity.'},
+    {time:'1:45–2:00',title:'Принцип «четырёх глаз» и итоги',body:'Практический чек-лист проверки AI-документа ИД: 7 пунктов «первого взгляда» + 8 пунктов «второго взгляда». Выдача промт-шаблонов модуля.'},
+  ],
+  cases:[
+    {title:'Срочное закрытие пакета ИД по монолитным работам',tool:'claude',
+     situation:'Жилой дом 17 эт., Казань. Технадзор назначил проверку послезавтра. Нужно 4 АОСР (армирование, опалубка, бетонирование, уход за бетоном), записи в журнал, сопроводительное письмо — за 1 рабочий день.',
+     goal:'Черновики всех 4 АОСР за 1,5 часа вместо стандартных 6–8 часов.',
+     prompt:`[ШАГ 1 — ШАПКА ДЛЯ СЕРИИ]:
+Зафиксируй общие данные объекта:
+Объект: [название]
+Стороны: [заказчик, генподрядчик, субподрядчик, тех.надзор]
+Нормативные документы: СП 63.13330.2022, СП 70.13330.2022, ГОСТ 34028-2016, ГОСТ 7473-2010, Проект шифр [...]
+Подтверди одной строкой.
+
+[ШАГ 2 — КАЖДЫЙ АОСР]:
+АОСР № 1. Армирование монолитного перекрытия 3-го этажа.
+Место: ось А-Е/1-8, отм. +8.200. Даты: [дата–дата]. Объём: [м²]
+Параметры: арматура ⌀12 А500С ✓, шаг 200×200 мм ✓, защ.слой 20мм (факт 20–22мм) ✓
+Материалы: арматура А500С ⌀12, паспорт № [...] от [...]
+Документация: исполнительная схема армирования лист КЖ-[...]
+Составь полный АОСР по форме РД 11-02-2006.`},
+    {title:'Анализ тома ПД через NotebookLM перед приёмкой',tool:'notebook',
+     situation:'Промышленный склад, Новосибирск. Завтра приёмка кровельных работ с технадзором. 180 страниц PDF. Нужно за 30 минут извлечь требования к кровельному «пирогу» и перечень АОСР.',
+     goal:'За 20–30 минут вместо 2–3 часов листания ПД получить все нужные данные.',
+     prompt:`[Загрузи PDF-том в NotebookLM, затем:]
+
+ЗАПРОС 1: «Извлеки полное описание состава кровельного покрытия ("пирога") — все слои, материалы, толщины. Укажи источник: страница, раздел.»
+
+ЗАПРОС 2: «Составь перечень видов скрытых работ по кровле, требующих АОСР. Для каждого: наименование / ссылка на лист проекта.»
+
+ЗАПРОС 3: «Укажи контролируемые параметры при устройстве кровли: что измерять, допуски, метод. Источник: страница, таблица.»
+
+ЗАПРОС 4: «Есть ли требования к условиям работ: температура, влажность основания? Цитируй точно с указанием страницы.»`},
+    {title:'Технологическая карта на устройство полимерного пола',tool:'claude',
+     situation:'Промышленный цех, Самара. Субподрядчик выходит на устройство эпоксидных наливных полов (3 мм). Нужна ТК для ППР и передачи субподрядчику.',
+     goal:'Получить структурированную ТК с пошаговой технологией и СОКК.',
+     prompt:`Роль: Ты — разработчик технологических карт, специалист по промышленным полам.
+
+Вид работ: Устройство наливного полимерного пола (эпоксидная система) толщиной 3 мм.
+Основание: бетон В25, выдержан 28 суток, влажность не более 4%.
+Температура при нанесении: +10...+25°С.
+Нормативные документы: СП 29.13330.2021 «Полы», ТР производителя.
+
+Задача: Разработай ТК. Структура:
+1. Область применения
+2. Технология (подготовка → грунтовка → базовый слой → финиш)
+3. Условия производства (время между слоями, вентиляция)
+4. СОКК — таблица: операция / параметр / допуск / метод / периодичность
+5. Требования ОТ (работа с химией, СИЗ)
+Объём: 4–5 страниц. Ссылки: только из перечня выше.`},
+  ],
+  assignments:[
+    {title:'Задание 3.1 — Мой первый АОСР через Claude',
+     goal:'Самостоятельно составить черновик АОСР и пройти чек-лист «четырёх глаз».',
+     description:'Заполнить промт для АОСР (реальный или учебный кейс). Запустить в Claude. Пройти чек-лист «первого взгляда» (7 пунктов). Проверить минимум 1 нормативный документ через Perplexity. Передать «на второй взгляд» партнёру по группе.',
+     criteria:[
+       {text:'Промт содержит все обязательные поля АОСР',pts:4},
+       {text:'Нет заглушек [УТОЧНИТЬ] в финальном документе',pts:2},
+       {text:'Нормативные ссылки проверены через Perplexity',pts:2},
+       {text:'Пройден чек-лист «первого взгляда» (все пункты отмечены)',pts:3},
+       {text:'Проведён «второй взгляд», зафиксированы замечания',pts:2},
+       {text:'Документ соответствует форме РД 11-02-2006',pts:2},
+     ]},
+    {title:'Задание 3.2 — Раздел ППР за 30 минут',
+     goal:'Составить один полноценный раздел ППР с помощью Claude.ai.',
+     description:'На выбор: А) ОПЗ к ППР, Б) Раздел «Охрана труда» на конкретный вид работ, В) Технологическая карта из своей практики. Заполнить промт-шаблон, получить результат, проверить по чек-листу.',
+     criteria:[
+       {text:'Промт содержит конкретные данные объекта (не заглушки)',pts:3},
+       {text:'Структура разделов документа полная',pts:3},
+       {text:'Нормативные ссылки проверены через Perplexity',pts:2},
+       {text:'Технические данные введены инженером, не выдуманы ИИ',pts:3},
+       {text:'Чек-лист пройден и приложен',pts:2},
+     ]},
+  ],
+  questions:[
+    {q:'Какой нормативный документ устанавливает форму АОСР?',
+     opts:['СП 48.13330.2019','РД 11-02-2006, Приложение 3','ГОСТ 23118-2012','МДС 12-29.2006'],
+     correct:1,
+     explain:'РД 11-02-2006 «Требования к составу и порядку ведения исполнительной документации» содержит Приложение 3 с формой АОСР. Основной нормативный документ по составу ИД.'},
+    {q:'Для чего в промте для АОСР нужна инструкция «[УТОЧНИТЬ], не домысливай»?',
+     opts:['Чтобы сократить объём документа','Чтобы ИИ явно обозначал пробелы, а не заполнял их выдуманными данными — критично для юридически значимого документа','Чтобы ускорить работу нейросети','Это стандартное требование к любым промтам'],
+     correct:1,
+     explain:'АОСР — юридически значимый документ. Придуманный реквизит паспорта качества или ФИО технадзора означает ложные сведения в документе. Метка [УТОЧНИТЬ] защищает от этого.'},
+    {q:'Что умеет делать NotebookLM применительно к проектной документации?',
+     opts:['Только текстовый поиск по документам','Отвечает на вопросы с указанием страниц, сравнивает версии, извлекает требования','Читает и интерпретирует чертежи','Автоматически исправляет ошибки в проекте'],
+     correct:1,
+     explain:'NotebookLM работает с текстовой частью PDF: поиск по содержимому, ответы со ссылками на страницы, сравнение версий документов. Интерпретация чертежей (графика) — не его функция.'},
+    {q:'Принцип «четырёх глаз» для ИД означает:',
+     opts:['Распечатывать документ в 4 экземплярах','Минимум два специалиста проверяют документ до его подписания','Читать документ 4 раза перед подписанием','Нормативные ссылки проверять по 4 источникам'],
+     correct:1,
+     explain:'«Четыре глаза» — классический принцип контроля. Первый проверяет техническую корректность, второй — соответствие форме и нормативной базе. Только после двух независимых проверок — подписание.'},
+    {q:'Какие данные в АОСР инженер вводит САМИ (не доверяет Claude)?',
+     opts:['Только структуру акта и заголовки разделов','Фактические параметры, реквизиты сертификатов, состав комиссии, даты, место работ','Только нормативные ссылки','Только подписи'],
+     correct:1,
+     explain:'Все фактические данные — измеренные параметры, реальные реквизиты документов, состав комиссии, даты, местоположение — вводит инженер. Это информация, которой у Claude нет.'},
+    {q:'Какой раздел ППР Claude.ai генерирует наиболее эффективно?',
+     opts:['Сетевой / линейный календарный график','Стройгенплан (графическая часть)','Текстовую часть: ОПЗ, организация работ, охрана труда, пожарная безопасность','Ведомость потребности в механизмах с точными данными'],
+     correct:2,
+     explain:'Claude работает с текстом. Текстовые разделы ППР — его сильная сторона. Графики и стройгенплан — графические документы, Claude не создаёт.'},
+    {q:'Техника «шапка + переменные» при составлении серии АОСР означает:',
+     opts:['Одинаковые заголовки для всех актов','Общие данные объекта задаются один раз, далее — только переменная часть каждого акта','Копирование предыдущего акта с заменой дат','Использование одного и того же промта без изменений'],
+     correct:1,
+     explain:'Claude помнит всё в текущем диалоге. Техника «шапки» позволяет задать общие данные один раз (объект, стороны, нормативная база), а затем добавлять только переменные каждого акта.'},
+    {q:'Инженер ПТО готовит раздел ОТ для ППР на работы на высоте. В тексте от Claude — ссылка на Приказ Минтруда №155н от 2014 года. Что делать?',
+     opts:['Оставить — 155н действующий','Проверить актуальность через Perplexity AI (этот приказ отменён и заменён №782н от 2020 г.)','Заменить на СП 49.13330','Убрать ссылку — в ППР они не нужны'],
+     correct:1,
+     explain:'Приказ №155н от 2014 года отменён и заменён Приказом №782н от 16.11.2020. Claude мог сослаться на устаревший документ. Использование устаревших нормативов в ППР — нарушение.'},
+  ],
+  prompts:[
+    {id:'p3_1',name:'АОСР — мастер-шаблон',tool:'claude',
+     when:'Черновик АОСР по форме РД 11-02-2006 для любого вида скрытых работ',
+     text:`Роль: Инженер ПТО — подготавливаю черновик АОСР (форма РД 11-02-2006).
+
+━━━ ДАННЫЕ ОБ ОБЪЕКТЕ ━━━
+Объект: [полное наименование]
+Застройщик / Заказчик: [название]
+Лицо, осуществляющее строительство: [название]
+Подрядчик (выполнил работы): [должность, ФИО]
+Технический надзор: [название / ФИО]
+Авторский надзор: [или «не осуществляется»]
+
+━━━ ВИД СКРЫТЫХ РАБОТ ━━━
+[Точное наименование согласно проекту]
+
+━━━ МЕСТО И СРОКИ ━━━
+Место: [здание, этаж, оси, отметки]
+Начало: [дата]    Окончание: [дата]    Объём: [кол-во + ед.изм.]
+
+━━━ МАТЕРИАЛЫ ━━━
+[Материал]: [марка/ГОСТ], паспорт качества № [...] от [...]
+
+━━━ НОРМАТИВНЫЕ ДОКУМЕНТЫ (только эти!) ━━━
+— [Проект, шифр]   — [СП ...]   — [ГОСТ ...]
+Неизвестные → [ПРОВЕРИТЬ]
+
+━━━ КОНТРОЛИРУЕМЫЕ ПАРАМЕТРЫ ━━━
+— [Параметр]: проект [X], факт [Y] [✓/✗]
+
+━━━ ЗАДАЧА ━━━
+Заполни все разделы АОСР:
+1. Представители сторон
+2. Освидетельствование (работы, место, сроки, объём)
+3. Материалы с реквизитами
+4. Нормативные документы
+5. Предъявленная документация
+6. Результат освидетельствования
+7. Разрешение последующих работ
+8. Подписи (заглушки [ФИО], [подпись])
+
+Неизвестные данные → [УТОЧНИТЬ], не домысливай.`},
+    {id:'p3_2',name:'Серия АОСР — шапка + переменные',tool:'claude',
+     when:'Несколько АОСР по одному объекту — общие данные вводятся один раз',
+     text:`[ШАГ 1 — отправляется один раз]:
+Зафиксируй общие данные объекта для серии АОСР:
+Объект: [название]
+Стороны: [заказчик / генподрядчик / субподрядчик / тех.надзор]
+Нормативные документы (общие): [перечень]
+Подтверди сохранение одной строкой.
+
+[ШАГ 2 — для каждого АОСР отдельным сообщением]:
+АОСР № [номер]. [Вид скрытых работ]
+Место: [...]    Даты: с [...] по [...]    Объём: [...]
+Параметры (факт): [перечень]
+Материалы: [наименование, реквизиты]
+Документация к акту: [перечень]
+Составь полный АОСР на основе сохранённых данных.`},
+    {id:'p3_3',name:'Запросы для NotebookLM по ПД',tool:'notebook',
+     when:'Быстрый поиск в томах ПД: требования, параметры, перечень АОСР, сравнение версий',
+     text:`ПОИСК ТРЕБОВАНИЯ:
+«Найди требования к [параметр] для [тип конструкции].
+Точная цитата + раздел + страница.»
+
+ПЕРЕЧЕНЬ АОСР:
+«Составь перечень видов скрытых работ по разделу [раздел ПД],
+требующих АОСР. Для каждого: наименование / ссылка на лист.»
+
+СРАВНЕНИЕ ВЕРСИЙ:
+«Сравни два загруженных документа [название].
+Что изменилось / добавлено / удалено? Страницы.»
+
+КОНТРОЛИРУЕМЫЕ ПАРАМЕТРЫ:
+«Что контролировать при [вид работ]?
+Допуски, метод, источник (страница, таблица).»`},
+    {id:'p3_4',name:'ОПЗ к ППР',tool:'claude',
+     when:'Общая пояснительная записка к ППР: объект, организация, ОТ, ПБ, охрана среды',
+     text:`Роль: Разработчик ППР строительной организации.
+
+Объект: [название], [адрес]
+Вид строительства: [новое / реконструкция / кап.ремонт]
+Заказчик: [название]    Генподрядчик: [название]
+Основание: [договор №, ПД шифр, задание на ППР]
+Характеристика: [площадь, этажность, конструктивная схема]
+Виды работ: [перечень]
+Сроки: с [дата] по [дата]    Особые условия: [если есть]
+
+Нормативные документы (только эти — проверены!):
+[перечислить актуальные]
+
+Задача: Разработай ОПЗ к ППР. Разделы:
+1. Общие сведения об объекте
+2. Основание для разработки
+3. Характеристика условий строительства
+4. Описание объекта
+5. Состав и последовательность работ
+6. Организация стройплощадки (текст)
+7. Охрана труда (по СП 48.13330)
+8. Пожарная безопасность (по ФЗ-123)
+9. Охрана окружающей среды
+
+Неизвестные нормативы → [ПРОВЕРИТЬ]. Объём: 3–5 страниц.`},
+  ],
+},
+{
+  id:'m4',num:4,colorClass:'m4',
+  title:'Снабжение и отчётность',
+  subtitle:'ИИ в операционном управлении',
+  goal:'Научить применять нейросети для автоматизации заявок на материалы, анализа поставщиков, протоколов совещаний и управленческой отчётности — интегрируя ИИ во все ключевые процессы ПТО.',
+  duration:'2 часа',
+  tools:['claude','perplexity','gemini'],
+  outcomes:[
+    'Составляет структурированные заявки на материалы из сырых данных прораба',
+    'Применяет Gemini для генерации протокола совещания из видео/аудиозаписи штаба',
+    'Подготавливает еженедельные и ежемесячные отчёты для руководства и заказчика',
+    'Использует ИИ для реестра поставщиков и сравнения КП',
+    'Проверяет поставщика через Perplexity (ЕГРЮЛ, арбитраж, РНП)',
+    'Интегрирует наработанные промты в ежедневный рабочий процесс ПТО',
+  ],
+  plan:[
+    {time:'0:00–0:10',title:'Разминка: итоги применения курса',body:'Опрос: что применили за время курса? Что дало реальный результат? Анонс финального мини-зачёта.'},
+    {time:'0:10–0:45',title:'Снабжение: заявки, поставщики, КП',body:'Карта задач снабжения. Live-демо: сырой список от прораба → структурированная заявка через Claude. Проверка поставщика через Perplexity (ЕГРЮЛ, kad.arbitr.ru, РНП). Шаблоны писем: претензия по срыву, рекламация по качеству.'},
+    {time:'0:45–1:05',title:'Протоколы совещаний через Gemini',body:'Проблема: 60–90 мин штаб + 30–60 мин протокол = 4–6 часов в месяц. Gemini: обработка видео/аудио. Live-демо: хаотичные заметки → официальный протокол за 10 минут.'},
+    {time:'1:05–1:35',title:'Отчётность для руководства и заказчика',body:'Три вида отчётов ПТО. Live-демо: еженедельный статус-отчёт. Ежемесячный сводный отчёт: отличия от еженедельного. Шаблон отчёта по инциденту.'},
+    {time:'1:35–2:00',title:'Интеграция и итоги курса',body:'Личный банк промтов: структура папок. Три уровня внедрения ИИ в ПТО (личное → командное → системное). Этика: что нельзя вводить в публичные нейросети. Финальная карта инструментов.'},
+  ],
+  cases:[
+    {title:'Заявка на материалы из сырого списка прораба',tool:'claude',
+     situation:'Жилой дом, Уфа. Через 2 недели — монтаж кровли. Прораб скинул в мессенджере: «битумный рубероид, стропила 100×50×6000, утеплитель минвата 100мм, пароизоляция, крепёж, коньки, водосток». Площадь кровли 850 м².',
+     goal:'Структурированная заявка с полными техническими характеристиками за 7 минут.',
+     prompt:`Роль: Инженер ПТО — оформляю заявку на материалы.
+
+Объект: жилой дом, г. Уфа.
+Вид работ: монтаж скатной кровли (металлочерепица).
+Площадь кровли: 850 м², уклон 30°.
+Требуемая дата поставки: [дата].
+
+Сырой список от прораба:
+«битумный рубероид, стропила 100×50×6000, утеплитель минвата 100мм, пароизоляция, крепёж, коньки, водосток»
+
+Задача: Оформи заявку-таблицу:
+№ / Наименование (полное тех. описание) / ГОСТ или ТУ / Ед.изм. / Кол-во / Требования к документам / Примечание
+
+Правила: Уточняй тех.характеристики из контекста. Неизвестное → [уточнить у прораба].
+После таблицы: записка в снабжение (объект, сроки, приоритет, ответственный [ФИО]).`},
+    {title:'Протокол штаба за 10 минут',tool:'claude',
+     situation:'Торговый центр, Новосибирск. Штаб прошёл в пятницу 16:30. Протокол нужен до 18:00. У начальника ПТО — хаотичные заметки в телефоне.',
+     goal:'Официальный протокол с поручениями из нескольких строк заметок за 10 минут.',
+     prompt:`Роль: Секретарь совещания — оформляю официальный протокол.
+
+Объект: [название]    Дата: [дата]    Председатель: [ФИО]
+
+Рабочие заметки:
+«штаб пятница, петров — скорректированный график до вторника,
+бетон заказываем ежедневно с запасом, иванов пишет претензию
+субподрядчику фасад до понедельника, сидоров закрывает АОСР
+по гидроизоляции до среды, коновалов уточняет срок арматуры д16,
+следующий штаб среда 10:00»
+
+Задача: Оформи официальный протокол совещания. Структура:
+1. Заголовок 2. Присутствовали 3. Повестка дня
+4. Рассмотрено (по вопросам: обсуждение + решение)
+5. Поручения — таблица: № / Поручение / Ответственный / Срок / Отметка
+6. Следующее совещание 7. Подписи (заглушки)
+
+Разговорный → официальный. Неясное → [уточнить]. Без рассуждений без решений.`},
+    {title:'Проверка поставщика через Perplexity',tool:'perplexity',
+     situation:'Незнакомая компания предлагает самую низкую цену на арматуру. Нужно быстро проверить надёжность перед размещением заказа на 2 млн руб.',
+     goal:'За 5 минут получить первичную оценку поставщика из открытых источников.',
+     prompt:`Проверь информацию о компании [полное наименование, ИНН] как потенциальном поставщике строительных материалов.
+
+Найди из открытых источников:
+1) Регистрация (ЕГРЮЛ/ЕГРИП — дата, адрес, статус: действующая/ликвидирована)
+2) Арбитражные дела (kad.arbitr.ru) — иски к компании за 2 года
+3) Реестр недобросовестных поставщиков (rnp.fas.gov.ru)
+4) Отзывы как о поставщике (строительные форумы, агрегаторы)
+5) Официальный сайт и актуальный прайс-лист
+
+Сформируй заключение: стоит ли работать с данным поставщиком?
+Красные флаги: ликвидация / РНП / много арбитражей.
+Укажи источники для каждого пункта.`},
+    {title:'Еженедельный статус-отчёт для заказчика',tool:'claude',
+     situation:'Промышленный цех, Самара. Корпоративный заказчик требует еженедельный отчёт в строгом формате с таблицами план/факт и разделом рисков. Каждый раз уходит 2–3 часа.',
+     goal:'Сократить подготовку отчёта до 30–40 минут за счёт автоматизации структуры.',
+     prompt:`Роль: Начальник ПТО — еженедельный статус-отчёт.
+
+Объект: [название]    Неделя: [дд.мм — дд.мм.гггг]
+Аудитория: заказчик (корпоративный формат)
+
+ДАННЫЕ НЕДЕЛИ (только реальные!):
+Выполнено: [вид / объём / ед.изм. / % этапа]
+Отставание: [раздел / дней / причина]
+Проблемы: [суть / статус]
+Снабжение: [поступило / ожидается / дефицит]
+План следующей недели: [вид / объём]
+
+Структура отчёта:
+1. Executive Summary (3–5 предложений)
+2. Таблица план/факт по разделам
+3. Анализ отклонений (причины + меры)
+4. Снабжение
+5. Риски (таблица: риск / вероятность / влияние / меры)
+6. Фокус следующей недели
+
+Данные — только мои. Тип.риски помечай [типовой — уточнить у РП].`},
+  ],
+  assignments:[
+    {title:'Задание 4.1 — Моя система снабжения через ИИ',
+     goal:'Создать полный набор снабженческих инструментов под свой объект.',
+     description:'1) Составить заявку на материалы для реального/учебного этапа. 2) Сформировать запрос КП поставщикам. 3) Подготовить шаблон претензии по срыву сроков. 4) Проверить одного из поставщиков через Perplexity.',
+     criteria:[
+       {text:'Заявка содержит полные технические характеристики материалов',pts:3},
+       {text:'Пометки [уточнить] там, где данных нет',pts:2},
+       {text:'Запрос КП содержит все ключевые параметры',pts:3},
+       {text:'Шаблон претензии персонализирован под реальную ситуацию',pts:2},
+       {text:'Проверка поставщика через Perplexity зафиксирована',pts:3},
+     ]},
+    {title:'Задание 4.2 — Протокол и отчёт за один подход',
+     goal:'Освоить подготовку двух управленческих документов за минимальное время.',
+     description:'Вариант А: загрузить реальную запись совещания в Gemini, получить протокол, проверить. Вариант Б: составить протокол из учебных заметок через Claude. Дополнительно: мини-статус-отчёт по объекту за прошедшую неделю.',
+     criteria:[
+       {text:'Протокол содержит все разделы (повестка, решения, поручения, сроки)',pts:4},
+       {text:'Поручения конкретны: ответственный + результат + срок',pts:3},
+       {text:'Имена/должности проверены в финальном документе',pts:2},
+       {text:'Статус-отчёт структурирован по шаблону',pts:3},
+       {text:'В отчёте только реальные данные — без «додуманных» цифр',pts:2},
+     ]},
+  ],
+  questions:[
+    {q:'Какой инструмент лучше всего подходит для генерации протокола из видеозаписи штаба?',
+     opts:['Claude.ai','Perplexity AI — ищет информацию в интернете','Gemini — умеет обрабатывать видео и аудиозаписи','NotebookLM'],
+     correct:2,
+     explain:'Gemini от Google обрабатывает мультимедийный контент: видео и аудиофайлы. Загруженную запись совещания он транскрибирует и структурирует в протокол.'},
+    {q:'Что нельзя вводить в публичные нейросети (Claude.ai, Perplexity)?',
+     opts:['Название объекта и адрес строительства','Персональные данные сотрудников и коммерческую тайну компании','Тип и марку применяемых материалов','Вид выполняемых работ и стадию строительства'],
+     correct:1,
+     explain:'Публичные нейросети обрабатывают данные на серверах провайдера. Персданные, коммерческая тайна и данные под NDA не должны передаваться без согласования с юристом.'},
+    {q:'Claude получил сырой список: «арматура 12-ка, бетон, опалубка». Что сделает при правильном промте?',
+     opts:['Откажется — данных недостаточно','Уточнит технические характеристики из контекста, проставит ед.изм. и ориентировочные количества, пометив допущения [уточнить]','Самостоятельно посчитает количество по нормам расхода','Предложит более дешёвые аналоги'],
+     correct:1,
+     explain:'Claude «достраивает» из контекста. «Арматура 12-ка» → «Арматура А500С ⌀12 мм, ГОСТ 34028-2016». Количество → [уточнить]. Инженер проверяет допущения с прорабом — быстрее, чем с нуля.'},
+    {q:'Зачем при проверке поставщика через Perplexity запрашивать данные из kad.arbitr.ru?',
+     opts:['Проверить юридический адрес','Найти арбитражные дела — сигнал о финансовых проблемах или недобросовестном поведении','Проверить наличие лицензий','Узнать актуальный прайс'],
+     correct:1,
+     explain:'kad.arbitr.ru — база арбитражных дел. Множество исков к поставщику от других подрядчиков — тревожный сигнал: возможные срывы поставок, споры о качестве, финансовые трудности.'},
+    {q:'Что обязательно должна содержать таблица поручений в протоколе совещания?',
+     opts:['Только текст поручения и срок','Содержание, ответственное лицо, срок и отметку об исполнении','Стоимость выполнения и приоритет','Дату и время совещания для каждого поручения'],
+     correct:1,
+     explain:'Эффективное поручение = конкретное действие + конкретный ответственный + чёткий срок + отметка об исполнении. Без любого элемента поручение превращается в «договорённость, о которой забыли».'},
+    {q:'С чего правильнее начать внедрение ИИ в работу подразделения ПТО?',
+     opts:['Разработать корпоративный регламент и ввести его приказом','Начать с личного применения, накопить успешные промты, показать коллегам результаты','Заменить все ручные операции на ИИ одновременно','Купить корпоративные подписки на все нейросети'],
+     correct:1,
+     explain:'Изменения в команде лучше всего работают через демонстрацию результата. Личный успех + наглядный результат — лучший аргумент для коллег. От личного банка промтов к командному — органичный путь.'},
+    {q:'Каким должен быть правильный еженедельный статус-отчёт через ИИ?',
+     opts:['Содержать все данные, которые генерирует Claude включая типовые риски','Содержать только реальные данные инженера; Claude структурирует — цифры только от специалиста','Быть максимально подробным — чем больше, тем лучше','Совпадать по формату с предыдущими, независимо от требований заказчика'],
+     correct:1,
+     explain:'Отчёт — документ ответственности. Объёмы, сроки, отклонения вводит специалист. Claude структурирует и формулирует. Типовые риски от Claude — только как подсказки, которые инженер подтверждает.'},
+    {q:'Чем отличается еженедельный статус от ежемесячного сводного отчёта?',
+     opts:['Они одинаковые — просто разная периодичность','Еженедельный — оперативный контроль; ежемесячный — стратегический анализ с финансовым исполнением, исполнительным резюме и рисками следующего периода','Еженедельный — для прораба, ежемесячный — для директора','Ежемесячный не нужен, если есть еженедельный'],
+     correct:1,
+     explain:'Оба нужны, но служат разным целям. Еженедельный: что сделали, что не так, что дальше. Ежемесячный: выполнение плана, финансы, стратегические риски. Разная аудитория, глубина, стиль.'},
+  ],
+  prompts:[
+    {id:'p4_1',name:'Заявка на материалы',tool:'claude',
+     when:'Превратить сырой список от прораба в структурированную заявку для снабжения',
+     text:`Роль: Инженер ПТО — оформляю заявку на материалы.
+
+Объект: [название, адрес]
+Вид работ: [наименование этапа]
+Требуемая дата поставки: [дата]
+Место доставки: [адрес / склад]
+
+Исходные данные (сырой список от прораба / из проекта):
+[Вставить в любом формате]
+
+Задача: Оформи заявку-таблицу:
+№ / Наименование (полное + тех.характеристики) /
+ГОСТ или ТУ / Ед.изм. / Кол-во /
+Требования к документам качества / Примечание
+
+Правила: Тех.характеристики — уточняй из контекста.
+Неизвестное → [уточнить у прораба]. ГОСТ → только если уверен.
+После таблицы: записка в снабжение (объект, сроки, приоритет, [ФИО]).`},
+    {id:'p4_2',name:'Проверка поставщика',tool:'perplexity',
+     when:'Первичная проверка нового поставщика перед размещением заказа',
+     text:`Проверь компанию [полное наименование, ИНН] как поставщика.
+
+Найди из открытых источников:
+1) Регистрация (ЕГРЮЛ — дата, адрес, статус)
+2) Арбитраж (kad.arbitr.ru — иски за 2 года)
+3) Реестр недобросовестных поставщиков (rnp.fas.gov.ru)
+4) Отзывы (строительные форумы, агрегаторы)
+5) Официальный сайт и актуальный прайс
+
+Заключение: стоит ли работать?
+Красные флаги: ликвидация / РНП / много арбитражей.
+Источники для каждого пункта.`},
+    {id:'p4_3',name:'Претензия поставщику — срыв сроков',tool:'claude',
+     when:'Официальная претензия при нарушении сроков поставки',
+     text:`Роль: Начальник ПТО / специалист по снабжению.
+
+Поставщик: [название, ИНН]
+Договор: № [...] от [дата]
+Плановая дата поставки: [дата]
+Факт: поставка не произведена по состоянию на [сегодня].
+Материалы: [наименование, кол-во]
+
+Требования:
+1. Поставить до [дата]
+2. Уведомить о причинах за [X] р/дней
+[3. Ссылка на санкции договора: ...]
+
+Составь официальную претензию.
+Тон: официальный, фиксирующий факт нарушения, без угроз.
+До 1 страницы: шапка / вступление / факт / требования / срок / подпись.`},
+    {id:'p4_4',name:'Протокол совещания из заметок',tool:'claude',
+     when:'Оформить официальный протокол из хаотичных заметок со штаба',
+     text:`Роль: Секретарь совещания — официальный протокол.
+
+Объект: [название]    Дата: [дата]    Председатель: [ФИО]
+
+Рабочие заметки:
+[Вставить в любом формате — даже хаотичные]
+
+Структура протокола:
+1. Заголовок 2. Присутствовали 3. Повестка дня
+4. Рассмотрено (по вопросам: обсуждение + решение)
+5. Поручения — таблица: № / Поручение / Ответственный / Срок / Отметка
+6. Следующее совещание 7. Подписи (заглушки)
+
+Разговорный → официальный. Неясное → [уточнить].
+Без рассуждений без принятого решения.`},
+    {id:'p4_5',name:'Протокол из видео/аудио (Gemini)',tool:'gemini',
+     when:'Автоматически сформировать протокол из видео или аудиозаписи штаба',
+     text:`[Загрузи видео / аудио в Gemini, затем отправь:]
+
+Объект: [название]    Дата: [дата]
+Председатель: [должность, ФИО]
+Участники: [список если известен — или «определи из записи»]
+
+Задача: Сформируй официальный протокол совещания.
+Структура:
+1. Заголовок (название, объект, дата, место, время)
+2. Присутствовали
+3. Повестка дня
+4. Рассмотрено (обсуждение + решение по каждому вопросу)
+5. Поручения — таблица: № / Поручение / Ответственный / Срок / Отметка
+6. Следующее совещание
+7. Подписи (заглушки)
+
+Плохо слышно → [уточнить]. Без рассуждений без решений.`},
+    {id:'p4_6',name:'Еженедельный статус-отчёт',tool:'claude',
+     when:'Еженедельный отчёт по объекту для директора строительства или заказчика',
+     text:`Роль: Начальник ПТО — еженедельный статус-отчёт.
+
+Объект: [название]    Неделя: [дд.мм — дд.мм.гггг]
+Аудитория: [директор строительства / заказчик]
+
+ДАННЫЕ НЕДЕЛИ (только реальные!):
+Выполнено: [вид / объём / ед.изм. / % этапа]
+Отставание: [раздел / дней / причина]
+Проблемы: [суть / статус]
+Снабжение: [поступило / ожидается / дефицит]
+План следующей недели: [вид / объём]
+
+Структура:
+1. Краткое резюме (3–4 предложения)
+2. Выполненные работы (таблица: вид / план / факт / %)
+3. Отклонения + меры (если есть)
+4. Проблемы и риски
+5. Снабжение
+6. План следующей недели
+7. Вопросы для руководства
+
+Стиль: деловой, конкретный. Только мои данные. До 1,5 страниц.`},
+    {id:'p4_7',name:'Отчёт по инциденту',tool:'claude',
+     when:'При нарушении качества, НС, предписании или аварийной ситуации',
+     text:`Роль: Начальник ПТО / руководитель проекта.
+
+Тип: [нарушение качества / НС / предписание / замечание ТН / авария]
+Дата/время: [когда]    Место: [объект, этаж, оси]
+Суть: [что произошло — только факты, без оценок]
+Выявлено: [кем и когда]
+Немедленные меры: [что сделано]
+Причины (предварительные): [версии]
+
+Составь официальный отчёт. Структура:
+1. Описание (факты без оценок)
+2. Немедленно принятые меры
+3. Предварительный анализ причин
+4. Корректирующие мероприятия (ответственный / срок)
+5. Вывод о возможности продолжения работ
+
+Тон: официальный, фактологический. До 1 страницы.`},
+  ],
+},
+];
+
+const EXAM={
+  title:'Итоговый мини-зачёт — «Один день начальника ПТО»',
+  description:'Комплексный кейс: Реконструкция административно-бытового корпуса производственного предприятия, г. Екатеринбург. 3 этажа, ~600 м² каждый. Пятница, 14:00.',
+  situations:[
+    {num:1,title:'Замечание технадзора (ИД)',
+     text:'09:00. Технадзор подписал предписание ТН-034: АОСР №8 на армирование фундаментных стен не содержит ссылки на исполнительную схему. Срок устранения — 3 рабочих дня.',
+     task:'1) Письмо-ответ технадзору на предписание. 2) Исправленный черновик АОСР №8 с добавлением ссылки на лист КЖ-07 ревизия 2. 3) Проверка актуальности СП 63.13330.2022 через Perplexity.',
+     tools:['claude','perplexity']},
+    {num:2,title:'Срочная смета (КП)',
+     text:'10:30. Заказчик запрашивает КП на дополнительные работы: перегородки ГКЛ на 3-м этаже, 180 м², 8 дверных проёмов. Срок подачи — до понедельника 12:00.',
+     task:'Коммерческая смета на СМР (без материалов): ГКЛ-перегородки 180 м², монтаж дверей 8 шт., шпатлёвка ГКЛ 360 м², вывоз мусора ~6 м³. Расценки — рыночные для Екатеринбурга.',
+     tools:['claude','perplexity']},
+    {num:3,title:'Проблема со снабжением',
+     text:'12:00. Субподрядчик по ОВК сообщает: поставщик вентрешёток задерживает поставку на 2 недели. Угроза срыва сдачи 3-го этажа на 10 дней.',
+     task:'1) Проверить ООО «ВентКомплект» через Perplexity. 2) Письмо субподрядчику с требованием альтернативного плана за 2 р/дня.',
+     tools:['perplexity','claude']},
+    {num:4,title:'Еженедельный штаб',
+     text:'16:00. Штаб с заказчиком. Данные: ГКЛ 2-й эт. 120/240 м² (50%), шпатлёвка 380/600 м² (63%), монолит подвала завершён (100%). Отставание ОВК 5 дней. Заметки со штаба имеются.',
+     task:'1) Еженедельный статус-отчёт для заказчика. 2) Протокол штаба из заметок (4 вопроса, 3 поручения).',
+     tools:['claude']},
+  ],
+  deliverables:[
+    'Письмо-ответ на предписание ТН-034',
+    'Исправленный черновик АОСР №8',
+    'Скриншот проверки СП 63 в Perplexity',
+    'Коммерческая смета на ГКЛ-перегородки',
+    'Результат проверки ООО «ВентКомплект»',
+    'Письмо субподрядчику ООО «КлиматСтрой»',
+    'Еженедельный статус-отчёт для заказчика',
+    'Протокол штаба от пятницы',
+  ],
+  criteria:[
+    {group:'Ситуация 1: ИД и переписка',items:[
+      {text:'Письмо: ссылка на предписание, признание, срок, обязательство',pts:3},
+      {text:'АОСР: ссылка на исполнительную схему, все поля заполнены',pts:4},
+      {text:'СП 63 проверен через Perplexity, результат зафиксирован',pts:2},
+    ]},
+    {group:'Ситуация 2: Смета',items:[
+      {text:'Все 4 вида работ присутствуют в смете',pts:3},
+      {text:'Структура: разбивка, итоги по разделам, НДС, «Примечание»',pts:3},
+      {text:'Расценки проверены через Perplexity (регион, период)',pts:2},
+    ]},
+    {group:'Ситуация 3: Снабжение',items:[
+      {text:'Проверка ВентКомплект с указанием источников',pts:3},
+      {text:'Письмо субподрядчику: факт, риски, требования, срок',pts:3},
+    ]},
+    {group:'Ситуация 4: Отчётность',items:[
+      {text:'Статус-отчёт: 6 разделов, только реальные данные',pts:4},
+      {text:'Протокол: вопросы повестки, решения, 3 поручения с ответственными',pts:4},
+    ]},
+    {group:'Качество работы',items:[
+      {text:'Промты содержат структуру РКТФО и ограничения по нормативам',pts:4},
+      {text:'В каждом документе отмечено что проверено и что требует второй проверки',pts:3},
+    ]},
+  ],
+  maxScore:42,passingScore:30,
+};
+</script>
+<script>
+// ─── STORAGE HELPERS ──────────────────────────────────────────
+const LS={
+  get(k,def){try{const v=localStorage.getItem(k);return v!=null?JSON.parse(v):def;}catch(e){return def;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+const PROGRESS_KEY='pto_prog_v3';
+const USERS_KEY='pto_users_v3';
+const SESSION_KEY='pto_sess_v3';
+const CUSTOM_KEY='pto_custom_v3';
+const TEACHER_PWD='ПТО2026';
+
+// ─── REACT SHORTHAND ──────────────────────────────────────────
+const {useState,useEffect,createElement:ce}=React;
+const h=(t,p,...c)=>ce(t,p,...c);
+const frag=(...c)=>ce(React.Fragment,null,...c);
+
+// ─── TOOL BADGE ───────────────────────────────────────────────
+function ToolBadge({tool}){
+  const T=TOOLS[tool];
+  if(!T)return null;
+  const cls={claude:'tc',perplexity:'tp',gemini:'tg',notebook:'tn',combo:'tc'}[tool]||'tc';
+  return h('span',{className:'tbadge '+cls},T.name);
+}
+
+// ─── NOTIFICATION ─────────────────────────────────────────────
+function Notif({msg,teacher}){
+  if(!msg)return null;
+  return h('div',{style:{position:'fixed',bottom:22,right:22,zIndex:999,background:teacher?'linear-gradient(135deg,var(--teacher),var(--teacher2))':'var(--navy)',color:'#fff',padding:'11px 16px',borderRadius:10,fontSize:13,boxShadow:'0 8px 32px rgba(0,0,0,.3)',animation:'fadeIn .2s ease',borderLeft:teacher?'3px solid var(--teacher2)':'3px solid var(--amber)'}},msg);
+}
+
+// ─── CELEBRATION MODAL ────────────────────────────────────────
+function Celeb({modTitle,nextTitle,onClose}){
+  const pieces=Array.from({length:16},(_,i)=>({l:(4+i*5.8)+'%',c:['#E8720C','#2563A8','#1A7F4B','#FDB97A','#4FA3D1','#A87DD6'][i%6],d:(i*.09).toFixed(2)+'s',s:i%3===0?9:6}));
+  return h('div',{className:'cov',onClick:onClose},
+    h('div',{className:'cbox',onClick:function(e){e.stopPropagation();}},
+      ...pieces.map(function(c,i){return h('div',{key:i,className:'confp',style:{left:c.l,top:-8,background:c.c,width:c.s,height:c.s,animationDelay:c.d}});}),
+      h('div',{style:{fontSize:50,marginBottom:10}},'🏆'),
+      h('div',{style:{fontSize:19,fontWeight:800,color:'var(--text)',marginBottom:7}},'Модуль завершён!'),
+      h('div',{style:{fontSize:13.5,color:'var(--sub)',lineHeight:1.65,marginBottom:20}},
+        h('strong',null,'"'+modTitle+'"'),' пройден успешно.',h('br'),
+        nextTitle
+          ?frag(h('span',null,'Следующий модуль '),h('strong',null,'"'+nextTitle+'"'),' открыт.')
+          :'🎓 Все модули пройдены! Банк промтов и зачёт разблокированы.'
+      ),
+      h('button',{className:'btn ba',onClick:onClose,style:{minWidth:150}},nextTitle?'К следующему →':'Открыть банк промтов')
+    )
+  );
+}
+
+// ─── LOCK SCREEN ──────────────────────────────────────────────
+function LockScreen({title,sub,steps}){
+  return h('div',{className:'lksc fade'},
+    h('div',{className:'lkico'},'🔒'),
+    h('div',{className:'lktitle'},title),
+    h('div',{className:'lksub'},sub),
+    steps&&steps.length>0&&h('div',{className:'lksteps'},
+      ...steps.map(function(s,i){return h('div',{key:i,className:'lkstep'+(s.done?' done':'')},h('span',null,s.done?'✅':'○'),h('span',null,s.label));})
+    )
+  );
+}
+
+// ─── AUTH SCREEN ──────────────────────────────────────────────
+function AuthScreen({onLogin}){
+  const [mode,setMode]=useState('login');
+  const [name,setName]=useState('');
+  const [pwd,setPwd]=useState('');
+  const [err,setErr]=useState('');
+
+  function submit(){
+    var n=name.trim();
+    if(!n){setErr('Введите имя пользователя');return;}
+    var users=LS.get(USERS_KEY,{});
+    if(mode==='register'){
+      if(users[n]){setErr('Такой пользователь уже существует');return;}
+      users[n]={name:n,progress:{m1:false,m2:false,m3:false,m4:false},created:new Date().toISOString(),active:new Date().toISOString()};
+      LS.set(USERS_KEY,users);
+      LS.set(SESSION_KEY,{username:n,isTeacher:false});
+      onLogin({username:n,isTeacher:false});
+    } else {
+      if(pwd===TEACHER_PWD){
+        LS.set(SESSION_KEY,{username:n||'Преподаватель',isTeacher:true});
+        onLogin({username:n||'Преподаватель',isTeacher:true});
+        return;
+      }
+      if(!users[n]){setErr('Пользователь не найден — зарегистрируйтесь');return;}
+      users[n].active=new Date().toISOString();
+      LS.set(USERS_KEY,users);
+      LS.set(SESSION_KEY,{username:n,isTeacher:false});
+      onLogin({username:n,isTeacher:false});
+    }
+  }
+
+  function tabStyle(m){return {flex:1,padding:'8px',border:'none',cursor:'pointer',borderRadius:7,background:mode===m?'var(--card)':'transparent',color:mode===m?'var(--text)':'var(--hint)',fontWeight:mode===m?700:500,fontSize:13.5,boxShadow:mode===m?'0 2px 8px rgba(0,0,0,.1)':'none',fontFamily:'inherit',transition:'all .13s'};}
+
+  return h('div',{className:'auth'},
+    h('div',{style:{width:'100%',maxWidth:390}},
+      h('div',{style:{textAlign:'center',marginBottom:26}},
+        h('div',{style:{fontFamily:'Bebas Neue,sans-serif',fontSize:46,color:'#fff',letterSpacing:4,lineHeight:1}},'ИИ',h('span',{style:{color:'var(--amber)'}},'в'),'ПТО'),
+        h('div',{style:{fontSize:14,color:'var(--silver)',marginTop:5}},'Нейросети для инженера строительства')
+      ),
+      h('div',{className:'abox'},
+        h('div',{style:{display:'flex',background:'var(--fog)',borderRadius:10,padding:4,marginBottom:20}},
+          h('button',{onClick:function(){setMode('login');setErr('');},style:tabStyle('login')},'Войти'),
+          h('button',{onClick:function(){setMode('register');setErr('');},style:tabStyle('register')},'Регистрация')
+        ),
+        h('p',{style:{fontSize:13,color:'var(--sub)',marginBottom:14,lineHeight:1.55}},
+          mode==='login'?'Введите своё имя для входа. Для преподавателя — имя и пароль.':'Введите имя — оно сохранит ваш прогресс в курсе.'
+        ),
+        h('label',{style:{fontSize:12,fontWeight:600,color:'var(--sub)',display:'block',marginBottom:4}},mode==='login'?'Имя пользователя':'Ваше имя'),
+        h('input',{className:'ainp'+(err?' err':''),value:name,autoFocus:true,placeholder:mode==='login'?'Иванов Иван':'Например: Петров А.В.',
+          onChange:function(e){setName(e.target.value);setErr('');},
+          onKeyDown:function(e){if(e.key==='Enter')submit();},
+          style:{marginBottom:10,display:'block'}}),
+        mode==='login'&&frag(
+          h('label',{style:{fontSize:12,fontWeight:600,color:'var(--sub)',display:'block',marginBottom:4}},'Пароль (только для преподавателя)'),
+          h('input',{className:'ainp',type:'password',value:pwd,placeholder:'Пароль преподавателя',
+            onChange:function(e){setPwd(e.target.value);setErr('');},
+            onKeyDown:function(e){if(e.key==='Enter')submit();},
+            style:{marginBottom:10,display:'block'}})
+        ),
+        err&&h('div',{style:{fontSize:12.5,color:'var(--red)',marginBottom:10,padding:'7px 10px',background:'rgba(192,57,43,.07)',borderRadius:6}},err),
+        h('button',{onClick:submit,style:{width:'100%',padding:'11px',border:'none',borderRadius:8,background:mode==='register'?'var(--blue)':'var(--amber)',color:mode==='register'?'#fff':'var(--navy)',fontSize:14,fontWeight:700,cursor:'pointer',fontFamily:'inherit'}},mode==='login'?'Войти →':'Зарегистрироваться →')
+      ),
+      h('div',{style:{textAlign:'center',marginTop:12,fontSize:12,color:'var(--silver)'}},'Прогресс сохраняется в этом браузере')
+    )
+  );
+}
+
+// ─── TEST SECTION ─────────────────────────────────────────────
+function TestSection({questions,alreadyPassed,onPass,teacherMode}){
+  const [answers,setAnswers]=useState({});
+  const [submitted,setSubmitted]=useState(false);
+  var pass=Math.ceil(questions.length*.75);
+
+  function pick(qi,oi){
+    if(answers[qi]!==undefined)return;
+    var next=Object.assign({},answers);next[qi]=oi;
+    setAnswers(next);
+    if(Object.keys(next).length===questions.length&&!submitted){
+      setSubmitted(true);
+      var correct=Object.keys(next).filter(function(i){return questions[+i].correct===next[i];}).length;
+      if(correct>=pass&&!alreadyPassed&&onPass)onPass();
+    }
+  }
+
+  var answered=Object.keys(answers).length;
+  var correct=Object.keys(answers).filter(function(i){return questions[+i].correct===answers[i];}).length;
+  var allAns=answered===questions.length;
+  var passed=correct>=pass;
+
+  function reset(){setAnswers({});setSubmitted(false);}
+
+  return h('div',null,
+    alreadyPassed&&!allAns&&h('div',{className:'pass',style:{marginTop:0,marginBottom:14}},
+      h('span',{style:{fontSize:24}},'✅'),
+      h('div',{style:{flex:1}},h('div',{style:{fontSize:14,fontWeight:700,color:'#fff'}},'Тест уже сдан'),h('div',{style:{fontSize:12.5,color:'rgba(255,255,255,.8)'}},'Можно пройти снова для практики')),
+      h('button',{className:'btn bsm',style:{background:'rgba(255,255,255,.15)',color:'#fff',border:'1px solid rgba(255,255,255,.2)'},onClick:reset},'Пройти снова')
+    ),
+    h('div',{style:{display:'flex',alignItems:'center',gap:12,marginBottom:13,flexWrap:'wrap'}},
+      h('span',{style:{fontSize:13,color:'var(--sub)'}},h('strong',null,answered),'/',questions.length,' ответов | Проходной: ',h('strong',null,pass),'/',questions.length),
+      allAns&&h('span',{style:{background:passed?'var(--green)':'var(--red)',color:'#fff',padding:'3px 11px',borderRadius:12,fontSize:12.5,fontWeight:700}},correct,'/',questions.length,' ',passed?'✓ Зачёт':'✗ Не зачёт'),
+      (allAns||teacherMode)&&h('button',{className:'btn bo bsm',style:{marginLeft:'auto'},onClick:reset},'↺ Сбросить')
+    ),
+    ...questions.map(function(q,qi){
+      var picked=answers[qi];
+      var isAns=picked!==undefined;
+      return h('div',{key:qi,className:'qw'+(isAns?(picked===q.correct?' ok':' no'):'')},
+        h('div',{className:'qnum'},'Вопрос ',qi+1,' из ',questions.length),
+        h('div',{className:'qtext'},q.q),
+        h('div',{className:'qopts'},
+          ...q.opts.map(function(opt,oi){
+            var cls='qopt';
+            if(isAns){if(oi===q.correct)cls+=' oc';else if(oi===picked)cls+=' ow';}
+            return h('button',{key:oi,className:cls,disabled:isAns||undefined,onClick:function(){pick(qi,oi);}},
+              h('span',{className:'ql'},String.fromCharCode(65+oi)),opt
+            );
+          })
+        ),
+        isAns&&h('div',{className:'qexp fade'},h('strong',null,picked===q.correct?'✓ Верно!':'✗ Неверно.'),' ',q.explain)
+      );
+    }),
+    allAns&&(passed
+      ?h('div',{className:'pass'},h('span',{style:{fontSize:26}},'🎉'),h('div',null,h('div',{style:{fontSize:14,fontWeight:700,color:'#fff'}},'Тест сдан! ',correct,'/',questions.length),h('div',{style:{fontSize:12.5,color:'rgba(255,255,255,.85)'}},'Следующий раздел открыт.')))
+      :h('div',{className:'fail'},h('span',{style:{fontSize:24}},'📖'),h('div',{style:{flex:1}},h('div',{style:{fontSize:13,fontWeight:700,color:'var(--red)'}},'Нужно ',pass,'+, набрано ',correct),h('div',{style:{fontSize:12.5,color:'var(--sub)'}},'Изучите материал и попробуйте снова.')),h('button',{className:'btn bo bsm',onClick:reset},'Ещё раз'))
+    )
+  );
+}
+
+// ─── CASE CARD ────────────────────────────────────────────────
+function CaseCard({c,idx,notify}){
+  const [open,setOpen]=useState(false);
+  return h('div',{className:'cw'},
+    h('div',{className:'ch',onClick:function(){setOpen(!open);}},
+      h('div',{className:'cnum'},idx+1),
+      h('span',{className:'ctitle'},c.title),
+      h(ToolBadge,{tool:c.tool}),
+      h('span',{style:{color:'var(--hint)',fontSize:12,marginLeft:5}},open?'▲':'▼')
+    ),
+    open&&h('div',{className:'cb fade'},
+      h('div',{style:{marginBottom:11}},h('div',{className:'clbl',style:{marginBottom:3}},'Ситуация'),h('p',{style:{fontSize:13,color:'var(--sub)',lineHeight:1.65}},c.situation)),
+      h('div',{style:{marginBottom:11}},h('div',{className:'clbl',style:{marginBottom:3}},'Цель'),h('p',{style:{fontSize:13,color:'var(--sub)',lineHeight:1.65}},c.goal)),
+      h('div',null,
+        h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:6}},
+          h('div',{className:'clbl'},'Пример промта'),
+          h('button',{className:'btn bg bsm',onClick:function(){navigator.clipboard.writeText(c.prompt);notify('📋 Скопировано!');}},'📋 Копировать')
+        ),
+        h('pre',{style:{fontFamily:'IBM Plex Mono,monospace',fontSize:12,background:'#EEF4FB',padding:12,borderRadius:8,whiteSpace:'pre-wrap',lineHeight:1.65,color:'var(--text)',border:'1px solid var(--border)',overflow:'auto'}},c.prompt)
+      )
+    )
+  );
+}
+
+// ─── PROMPT EDITOR ────────────────────────────────────────────
+function PromptEditor({prompt,notify,teacherMode,onSave}){
+  const [text,setText]=useState(prompt.text);
+  useEffect(function(){setText(prompt.text);},[prompt.id,prompt.text]);
+  var T=TOOLS[prompt.tool];
+  var tcls={claude:'tc',perplexity:'tp',gemini:'tg',notebook:'tn',combo:'tc'}[prompt.tool]||'tc';
+  return h('div',{className:'pw'},
+    h('div',{className:'ph'},
+      h('span',{className:'pname'},prompt.name),
+      T&&h('span',{className:'tbadge '+tcls},T.name),
+      teacherMode&&h('span',{className:'tbadge2',style:{fontSize:10,padding:'2px 8px'}},'✏️ ред.')
+    ),
+    prompt.when&&h('div',{className:'pwhen'},'💡 ',prompt.when),
+    h('textarea',{className:'pta',value:text,onChange:function(e){setText(e.target.value);},spellCheck:false}),
+    h('div',{className:'pf'},
+      h('button',{className:'btn bp bsm',onClick:function(){navigator.clipboard.writeText(text);notify('📋 Промт скопирован!');}},  '📋 Копировать'),
+      h('button',{className:'btn bo bsm',onClick:function(){setText(prompt.text);}},'↺ Сбросить'),
+      teacherMode&&onSave&&h('button',{className:'btn bt bsm',onClick:function(){onSave(prompt.id,text);notify('💾 Сохранено',true);}},  '💾 Сохранить'),
+      h('span',{style:{marginLeft:'auto',fontSize:11,color:'var(--hint)'}},teacherMode?'Режим редактирования':'Редактируйте под свои задачи')
+    )
+  );
+}
+
+// ─── ASSIGNMENT CARD ──────────────────────────────────────────
+function AssignCard({a,idx}){
+  const [checks,setChecks]=useState(a.criteria.map(function(){return false;}));
+  var total=a.criteria.reduce(function(s,c){return s+c.pts;},0);
+  var earned=checks.reduce(function(s,v,i){return s+(v?a.criteria[i].pts:0);},0);
+  return h('div',{className:'aw',style:{marginBottom:11}},
+    h('div',{className:'ah'},
+      h('div',{style:{width:25,height:25,borderRadius:'50%',background:'var(--amber)',color:'var(--navy)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:800,flexShrink:0}},idx+1),
+      h('div',{style:{flex:1,fontSize:13,fontWeight:700,color:'#fff'}},a.title),
+      h('span',{style:{fontSize:12,color:'#F59338',fontWeight:700}},earned,'/',total,' б.')
+    ),
+    h('div',{className:'ab'},
+      h('p',{style:{fontSize:13,color:'var(--sub)',marginBottom:9,lineHeight:1.6}},h('strong',{style:{color:'var(--text)'}},'Цель: '),a.goal),
+      h('p',{style:{fontSize:13,color:'var(--sub)',marginBottom:11,lineHeight:1.6}},a.description),
+      h('div',{style:{fontSize:10,fontWeight:700,letterSpacing:.8,textTransform:'uppercase',color:'var(--hint)',marginBottom:6}},'Критерии (нажмите для отметки):'),
+      ...a.criteria.map(function(c,ci){
+        return h('div',{key:ci,className:'cr',onClick:function(){setChecks(function(prev){var n=prev.slice();n[ci]=!n[ci];return n;});}},
+          h('div',{className:'cpts'},c.pts),
+          h('div',{style:{flex:1,fontSize:13,color:checks[ci]?'var(--green)':'var(--sub)',textDecoration:checks[ci]?'line-through':'none'}},c.text),
+          h('span',{style:{fontSize:14,color:checks[ci]?'var(--green)':'var(--border)'}},checks[ci]?'✓':'○')
+        );
+      })
+    )
+  );
+}
+
+// ─── TEACHER EDIT MODULE ──────────────────────────────────────
+function TeacherEditModule({mod,custom,onSave,notify}){
+  var data=Object.assign({},mod,custom[mod.id]||{});
+  const [title,setTitle]=useState(data.title);
+  const [subtitle,setSubtitle]=useState(data.subtitle);
+  const [goal,setGoal]=useState(data.goal);
+  const [outcomes,setOutcomes]=useState((data.outcomes||[]).slice());
+  const [dirty,setDirty]=useState(false);
+  function save(){onSave(mod.id,{title:title,subtitle:subtitle,goal:goal,outcomes:outcomes.slice()});setDirty(false);notify('💾 Изменения сохранены',true);}
+  return h('div',null,
+    h('div',{className:'tsec'},
+      h('div',{className:'tst'},'✏️ Основная информация'),
+      h('label',{style:{fontSize:12,color:'var(--sub)',display:'block',marginBottom:3}},'Название'),
+      h('input',{className:'einp',value:title,onChange:function(e){setTitle(e.target.value);setDirty(true);}}),
+      h('label',{style:{fontSize:12,color:'var(--sub)',display:'block',marginBottom:3}},'Подзаголовок'),
+      h('input',{className:'einp',value:subtitle,onChange:function(e){setSubtitle(e.target.value);setDirty(true);}}),
+      h('label',{style:{fontSize:12,color:'var(--sub)',display:'block',marginBottom:3}},'Цель модуля'),
+      h('textarea',{className:'eta',rows:3,value:goal,onChange:function(e){setGoal(e.target.value);setDirty(true);}})
+    ),
+    h('div',{className:'tsec'},
+      h('div',{className:'tst'},'🎯 Результаты обучения'),
+      ...outcomes.map(function(o,i){
+        return h('div',{key:i,style:{display:'flex',gap:6,marginBottom:6,alignItems:'flex-start'}},
+          h('span',{style:{width:20,height:20,borderRadius:'50%',background:'var(--amber)',color:'var(--navy)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:800,flexShrink:0,marginTop:10}},i+1),
+          h('textarea',{className:'eta',style:{minHeight:48,marginBottom:0,flex:1},value:o,onChange:function(e){var n=outcomes.slice();n[i]=e.target.value;setOutcomes(n);setDirty(true);}}),
+          h('button',{className:'btn bdr bsm',style:{marginTop:7,flexShrink:0},onClick:function(){setOutcomes(outcomes.filter(function(_,j){return j!==i;}));setDirty(true);}},'✕')
+        );
+      }),
+      h('button',{className:'btn bo bsm',onClick:function(){setOutcomes(outcomes.concat('Новый результат'));setDirty(true);}},'+ Добавить')
+    ),
+    dirty&&h('div',{style:{display:'flex',gap:8,justifyContent:'flex-end',marginTop:8}},
+      h('button',{className:'btn bo bsm',onClick:function(){setTitle(data.title);setSubtitle(data.subtitle);setGoal(data.goal);setOutcomes((data.outcomes||[]).slice());setDirty(false);}},'Отменить'),
+      h('button',{className:'btn bt',onClick:save},'💾 Сохранить')
+    )
+  );
+}
+
+// ─── MODULE VIEW ──────────────────────────────────────────────
+function ModuleView({mod,completed,onComplete,isLocked,nextMod,teacherMode,custom,onSaveCustom,onSavePrompt,notify}){
+  const [tab,setTab]=useState('plan');
+  const [showCeleb,setShowCeleb]=useState(false);
+  var data=Object.assign({},mod,custom[mod.id]||{});
+  var prompts=(mod.prompts||[]).map(function(p){
+    var saved=(custom[mod.id]&&custom[mod.id].prompts||[]).find(function(sp){return sp.id===p.id;});
+    return saved?Object.assign({},p,{text:saved.text}):p;
+  });
+
+  var tabs=[
+    {id:'plan',label:'📋 План'},{id:'cases',label:'🔍 Кейсы'},{id:'tasks',label:'✏️ Задания'},
+    {id:'test',label:'✅ Тест'},{id:'prompts',label:'⚡ Промты'},
+  ];
+  if(teacherMode){tabs=tabs.concat([{id:'edit',label:'✏️ Ред. модуль'},{id:'editp',label:'✏️ Ред. промты'}]);}
+
+  if(isLocked&&!teacherMode){
+    return h('div',{className:'fade'},
+      h('div',{className:'hero',style:{marginBottom:0,borderRadius:'14px 14px 0 0'}},
+        h('div',{className:'hbgn'},'M',mod.num),
+        h('span',{className:'htag lock'},'🔒 ЗАБЛОКИРОВАН'),
+        h('h1',{style:{fontSize:19,fontWeight:800,color:'#fff',marginTop:6,marginBottom:5}},data.title,': ',data.subtitle),
+        h('p',{style:{color:'var(--silver)',fontSize:13.5}},data.goal)
+      ),
+      h('div',{className:'card',style:{borderRadius:'0 0 14px 14px',borderTop:'none'}},
+        h(LockScreen,{title:'Модуль '+mod.num+' заблокирован',
+          sub:'Для открытия сдайте тест предыдущего модуля с результатом ≥75%.',
+          steps:[{label:'Пройдите тест Модуля '+(mod.num-1)},{label:'Наберите '+Math.ceil(8*.75)+'+ правильных ответов'},{label:'Модуль '+mod.num+' откроется автоматически'}]
+        })
+      )
+    );
+  }
+
+  return h('div',{className:'fade'},
+    showCeleb&&h(Celeb,{modTitle:data.title+': '+data.subtitle,nextTitle:nextMod?nextMod.title+': '+nextMod.subtitle:null,onClose:function(){setShowCeleb(false);}}),
+    h('div',{className:'hero'},
+      h('div',{className:'hbgn'},'M',mod.num),
+      h('div',{style:{display:'flex',gap:6,marginBottom:7,flexWrap:'wrap'}},
+        h('span',{className:'htag'},'МОДУЛЬ ',mod.num),
+        completed&&h('span',{className:'htag done'},'✅ ЗАВЕРШЁН'),
+        teacherMode&&h('span',{className:'htag tt'},'👨‍🏫 ПРЕПОДАВАТЕЛЬ')
+      ),
+      h('h1',{style:{fontSize:19,fontWeight:800,color:'#fff',position:'relative',marginBottom:5}},data.title,': ',data.subtitle),
+      h('p',{style:{color:'var(--silver)',fontSize:13.5,lineHeight:1.6,maxWidth:560,position:'relative'}},data.goal),
+      h('div',{style:{display:'flex',gap:9,marginTop:13,flexWrap:'wrap',position:'relative'}},
+        h('span',{style:{display:'flex',alignItems:'center',gap:5,background:'rgba(255,255,255,.08)',borderRadius:16,padding:'4px 10px',fontSize:12,color:'var(--mist)'}},'⏱ ',mod.duration),
+        ...(mod.tools||[]).map(function(t){return h('span',{key:t,style:{display:'flex',alignItems:'center',gap:5,background:'rgba(255,255,255,.08)',borderRadius:16,padding:'4px 10px',fontSize:12,color:'var(--mist)'}},'🔧 ',(TOOLS[t]&&TOOLS[t].name)||t);})
+      )
+    ),
+    h('div',{className:'card'},
+      h('div',{style:{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:9}},'🎯 Результаты обучения'),
+      h('div',{className:'og'},
+        ...(data.outcomes||[]).map(function(o,i){return h('div',{key:i,className:'oi'},h('div',{className:'onum'},i+1),h('div',{style:{fontSize:13,color:'var(--sub)',lineHeight:1.5}},o));})
+      )
+    ),
+    h('div',{className:'mtabs'},
+      ...tabs.map(function(t){return h('button',{key:t.id,className:'mtab'+(tab===t.id?' on':''),onClick:function(){setTab(t.id);}},t.label);})
+    ),
+    tab==='plan'&&h('div',{className:'tl fade'},
+      ...(mod.plan||[]).map(function(p,i){return h('div',{key:i,className:'tli'},h('div',{className:'tltime'},p.time),h('div',{className:'tltitle'},p.title),h('div',{className:'tlbody'},p.body));})
+    ),
+    tab==='cases'&&h('div',{className:'fade'},
+      h('p',{style:{fontSize:13,color:'var(--sub)',marginBottom:12}},'Нажмите на кейс для просмотра.'),
+      ...(mod.cases||[]).map(function(c,i){return h(CaseCard,{key:i,c:c,idx:i,notify:notify});})
+    ),
+    tab==='tasks'&&h('div',{className:'fade'},
+      ...(mod.assignments||[]).map(function(a,i){return h(AssignCard,{key:i,a:a,idx:i});}),
+      !completed&&!teacherMode&&h('div',{style:{marginTop:6,padding:'11px 13px',borderRadius:10,background:'rgba(37,99,168,.05)',border:'1.5px dashed var(--blue2)',fontSize:13,color:'var(--sub)'}},'💡 После заданий перейдите на вкладку ',h('strong',null,'«✅ Тест»'),' и сдайте тест.')
+    ),
+    tab==='test'&&h('div',{className:'fade'},
+      h('div',{className:'card fog',style:{padding:'12px 14px',marginBottom:13}},
+        h('span',{style:{fontSize:13,color:'var(--sub)'}},'⏱ 15 мин | ',(mod.questions||[]).length,' вопросов | Проходной: ',Math.ceil((mod.questions||[]).length*.75),'/',(mod.questions||[]).length,
+          completed&&h('span',{style:{marginLeft:10,color:'var(--green)',fontWeight:600}},'✅ Сдан'),
+          teacherMode&&h('span',{style:{marginLeft:10,color:'var(--teacher)',fontWeight:600}},'👨‍🏫 Просмотр')
+        )
+      ),
+      h(TestSection,{questions:mod.questions||[],alreadyPassed:completed,teacherMode:teacherMode,
+        onPass:function(){if(!completed){onComplete(mod.id);setShowCeleb(true);}}
+      })
+    ),
+    tab==='prompts'&&h('div',{className:'fade'},
+      !teacherMode&&h('div',{style:{marginBottom:12,padding:'10px 12px',borderRadius:10,background:'rgba(232,114,12,.05)',border:'1px solid rgba(232,114,12,.2)',fontSize:13,color:'var(--sub)',display:'flex',gap:7}},'💡 Промты этого модуля. ',h('strong',null,'Полный банк'),' всех модулей откроется после прохождения курса.'),
+      ...prompts.map(function(p){return h(PromptEditor,{key:p.id,prompt:p,notify:notify,teacherMode:false});})
+    ),
+    tab==='edit'&&teacherMode&&h(TeacherEditModule,{mod:mod,custom:custom,onSave:onSaveCustom,notify:notify}),
+    tab==='editp'&&teacherMode&&h('div',{className:'fade'},
+      h('div',{className:'tsec',style:{marginBottom:13}},h('div',{className:'tst'},'⚡ Промты — режим редактирования'),h('p',{style:{fontSize:13,color:'var(--sub)'}},'Нажмите «Сохранить» под каждым промтом.')),
+      ...prompts.map(function(p){return h(PromptEditor,{key:p.id,prompt:p,notify:notify,teacherMode:true,onSave:function(id,text){onSavePrompt(mod.id,id,text);}});})
+    )
+  );
+}
+
+// ─── OVERVIEW PAGE ────────────────────────────────────────────
+function OverviewPage({completed,allDone,navigate,teacherMode,username}){
+  var done=Object.values(completed).filter(Boolean).length;
+  return h('div',{className:'fade'},
+    h('div',{style:{background:'linear-gradient(135deg,var(--navy) 0%,var(--navy3) 60%,#2A1B5C 100%)',borderRadius:14,padding:'28px 24px',marginBottom:15,position:'relative',overflow:'hidden'}},
+      h('div',{style:{position:'absolute',right:-15,top:-15,width:140,height:140,borderRadius:'50%',background:'radial-gradient(circle,rgba(232,114,12,.22) 0%,transparent 70%)'}}),
+      teacherMode&&h('div',{style:{marginBottom:8}},h('span',{className:'tbadge2'},'👨‍🏫 РЕЖИМ ПРЕПОДАВАТЕЛЯ — ПОЛНЫЙ ДОСТУП')),
+      h('div',{style:{fontFamily:'Bebas Neue,sans-serif',fontSize:12,letterSpacing:3,color:'var(--amber)',marginBottom:7}},'ОНЛАЙН-КУРС ДЛЯ СПЕЦИАЛИСТОВ ПТО'),
+      h('h1',{style:{fontSize:24,fontWeight:800,color:'#fff',lineHeight:1.2,marginBottom:8,position:'relative'}},'ИИ в ПТО: нейросети',h('br'),'для инженера строительства'),
+      h('p',{style:{color:'var(--silver)',fontSize:13.5,lineHeight:1.65,maxWidth:500,marginBottom:15,position:'relative'}},'Практический курс по применению Claude.ai, Perplexity AI, NotebookLM и Gemini в задачах производственно-технического отдела.'),
+      h('div',{style:{background:'rgba(255,255,255,.08)',borderRadius:10,padding:'13px 16px',maxWidth:400,position:'relative'}},
+        h('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:6}},h('span',{style:{fontSize:12.5,color:'var(--silver)'}},'Прогресс'),h('span',{style:{fontSize:12.5,fontWeight:700,color:'var(--amber)'}},teacherMode?'Полный доступ':(done+'/4 модулей'))),
+        h('div',{className:'pbarh'},h('div',{className:'pbarfill',style:{width:(teacherMode?100:done/4*100)+'%'}})),
+        allDone&&!teacherMode&&h('div',{style:{marginTop:7,fontSize:13,color:'#52C78A',fontWeight:600}},'🎓 Курс завершён! Все материалы разблокированы.'),
+        teacherMode&&h('div',{style:{marginTop:7,fontSize:13,color:'var(--teacher2)',fontWeight:600}},'Все разделы доступны для просмотра и редактирования')
+      )
+    ),
+    allDone&&!teacherMode&&h('div',{className:'ccdone'},
+      h('div',{style:{position:'relative',zIndex:1}},
+        h('div',{style:{fontSize:30,marginBottom:6}},'🎓'),
+        h('div',{style:{fontSize:17,fontWeight:800,color:'#fff',marginBottom:4}},'Поздравляем! Курс завершён'),
+        h('div',{style:{fontSize:13.5,color:'rgba(255,255,255,.75)',marginBottom:13}},'Банк промтов и итоговый зачёт разблокированы'),
+        h('div',{style:{display:'flex',gap:9,justifyContent:'center',flexWrap:'wrap'}},
+          h('button',{className:'btn ba',onClick:function(){navigate('prompts');}},'⚡ Банк промтов'),
+          h('button',{className:'btn',style:{background:'rgba(255,255,255,.15)',color:'#fff',border:'1px solid rgba(255,255,255,.2)'},onClick:function(){navigate('exam');}},'🏆 Итоговый зачёт')
+        )
+      )
+    ),
+    h('div',{className:'ogrid'},
+      ...MODULES.map(function(m,idx){
+        var isDone=completed[m.id];
+        var isLock=!teacherMode&&idx>0&&!completed[MODULES[idx-1].id];
+        return h('div',{key:m.id,className:'mcard '+m.colorClass+(isLock?' lk':''),onClick:function(){if(!isLock)navigate(m.id);}},
+          h('div',{className:'mcbgn'},'M',m.num),
+          h('div',{style:{display:'flex',alignItems:'center',gap:7,marginBottom:5}},
+            h('span',{style:{fontSize:10,fontWeight:700,letterSpacing:1.5,color:'var(--hint)'}},'МОДУЛЬ ',m.num),
+            isLock&&h('span',{style:{fontSize:11,color:'var(--hint)'}},'🔒'),
+            isDone&&h('span',{style:{fontSize:11,color:'var(--green)',fontWeight:700}},'✅'),
+            !isLock&&!isDone&&h('span',{style:{fontSize:11,color:'var(--blue)',fontWeight:700}},'🔓')
+          ),
+          h('h3',{style:{fontSize:13.5,fontWeight:800,color:'var(--text)',marginBottom:3}},m.title),
+          h('p',{style:{fontSize:12.5,color:'var(--sub)',marginBottom:3}},m.subtitle),
+          h('p',{style:{fontSize:12,color:'var(--sub)',lineHeight:1.5}},m.goal.slice(0,85),'…'),
+          h('div',{style:{display:'flex',gap:5,flexWrap:'wrap',marginTop:10}},
+            h('span',{className:'chip '+['cb1','cb2','cb3','cb4'][m.num-1]},m.duration),
+            ...(m.tools||[]).map(function(t){return h('span',{key:t,className:'chip cb1'},(TOOLS[t]&&TOOLS[t].name)||t);})
+          ),
+          isLock&&h('div',{style:{marginTop:8,fontSize:12,color:'var(--hint)',background:'rgba(107,139,170,.07)',borderRadius:7,padding:'7px 9px'}},'🔒 Сдайте тест Модуля ',m.num-1)
+        );
+      })
+    ),
+    h('div',{className:'card',style:{marginBottom:13}},
+      h('div',{style:{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:11}},'🔧 Инструменты курса'),
+      h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}},
+        ...[['claude','Генерация документов, письма, ИД, ППР, сметы, отчёты'],['perplexity','Проверка ГОСТ/СП, мониторинг цен, проверка поставщиков'],['notebook','Анализ ПД, поиск требований, сравнение версий'],['gemini','Протоколы из видео/аудио, анализ таблиц']].map(function(item){
+          var k=item[0],desc=item[1],t=TOOLS[k];
+          return h('div',{key:k,style:{display:'flex',gap:9,alignItems:'flex-start',padding:10,borderRadius:10,border:'1px solid var(--border)',background:'var(--fog)'}},
+            h('div',{style:{width:8,height:8,borderRadius:'50%',background:t.dot,flexShrink:0,marginTop:5}}),
+            h('div',null,h('div',{style:{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:2}},t.name),h('div',{style:{fontSize:12,color:'var(--sub)',lineHeight:1.5}},desc))
+          );
+        })
+      )
+    ),
+    h('div',{className:'card'},
+      h('div',{style:{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:11}},'⚡ Структура промта — РКТФО'),
+      h('div',{style:{display:'grid',gridTemplateColumns:'repeat(5,1fr)',gap:7}},
+        ...[['Р','РОЛЬ','Кто ты?','#2563A8'],['К','КОНТЕКСТ','Объект, стадия','#1A7F4B'],['Т','ЗАДАЧА','Что сделать?','#E8720C'],['Ф','ФОРМАТ','Тип и структура','#6B3FA0'],['О','ОГРАНИЧ.','Тон, нормативы','#B55C00']].map(function(item){
+          var l=item[0],n=item[1],d=item[2],c=item[3];
+          return h('div',{key:l,style:{textAlign:'center',padding:'11px 5px',borderRadius:10,background:c+'15',border:'2px solid '+c+'30'}},
+            h('div',{style:{fontFamily:'Bebas Neue,sans-serif',fontSize:28,color:c,lineHeight:1}},l),
+            h('div',{style:{fontSize:10,fontWeight:700,color:c,marginBottom:2}},n),
+            h('div',{style:{fontSize:10,color:'var(--sub)'}},d)
+          );
+        })
+      ),
+      h('div',{style:{marginTop:10,padding:'10px 12px',background:'rgba(232,114,12,.05)',borderRadius:7,borderLeft:'3px solid var(--amber)',fontSize:13,color:'var(--sub)'}},
+        h('strong',{style:{color:'var(--amber)'}},'Принцип «четырёх глаз»:'),' Любой AI-документ перед подписанием проверяют минимум два специалиста.'
+      )
+    )
+  );
+}
+
+// ─── PROMPTS PAGE ─────────────────────────────────────────────
+function PromptsPage({locked,completed,teacherMode,custom,onSavePrompt,notify}){
+  var allP=[];
+  MODULES.forEach(function(m){
+    var saved=(custom[m.id]&&custom[m.id].prompts)||[];
+    (m.prompts||[]).forEach(function(p){
+      var s=saved.find(function(sp){return sp.id===p.id;});
+      allP.push(Object.assign({},s?Object.assign({},p,{text:s.text}):p,{modTitle:m.title,modNum:m.num,modId:m.id}));
+    });
+  });
+  const [filter,setFilter]=useState('all');
+  var filtered=filter==='all'?allP:allP.filter(function(p){return p.tool===filter;});
+
+  if(locked&&!teacherMode){
+    var done=Object.values(completed).filter(Boolean).length;
+    return h('div',{className:'fade'},
+      h('div',{style:{background:'linear-gradient(135deg,var(--navy),var(--navy3))',borderRadius:14,padding:'22px',marginBottom:15}},h('div',{style:{fontSize:17,fontWeight:800,color:'#fff',marginBottom:4}},'⚡ Банк промт-шаблонов'),h('div',{style:{fontSize:13,color:'var(--silver)'}},'23 промта по всем 4 модулям')),
+      h('div',{className:'card'},
+        h(LockScreen,{title:'Банк промтов заблокирован',sub:'Откроется после прохождения всех 4 модулей.',steps:MODULES.map(function(m){return {label:'Модуль '+m.num+': '+m.title+' — сдать тест',done:completed[m.id]};})}),
+        h('div',{style:{marginTop:11,padding:'12px 13px',background:'rgba(37,99,168,.06)',borderRadius:10,border:'1.5px dashed var(--blue2)',fontSize:13.5,color:'var(--sub)',textAlign:'center'}},'Прогресс: ',h('strong',{style:{color:'var(--blue)'}},done,'/4'),' модулей завершено')
+      )
+    );
+  }
+  return h('div',{className:'fade'},
+    h('div',{style:{marginBottom:15}},
+      h('div',{style:{display:'flex',alignItems:'center',gap:9,marginBottom:4}},h('h2',{style:{fontSize:17,fontWeight:800,color:'var(--text)'}},'⚡ Банк промт-шаблонов'),teacherMode&&h('span',{className:'tbadge2'},'👨‍🏫 Редактирование')),
+      h('p',{style:{fontSize:13.5,color:'var(--sub)'}},allP.length,' промтов. Редактируйте и копируйте в нейросеть.')
+    ),
+    h('div',{className:'mtabs',style:{marginBottom:15}},
+      ...[['all','Все'],['claude','Claude.ai'],['perplexity','Perplexity AI'],['gemini','Gemini'],['notebook','NotebookLM']].map(function(item){return h('button',{key:item[0],className:'mtab'+(filter===item[0]?' on':''),onClick:function(){setFilter(item[0]);}},item[1]);})
+    ),
+    ...filtered.map(function(p){
+      return h('div',{key:p.id},
+        h('div',{style:{fontSize:10,color:'var(--hint)',marginBottom:3,fontWeight:700,letterSpacing:1}},'МОДУЛЬ ',p.modNum,' — ',p.modTitle.toUpperCase()),
+        h(PromptEditor,{prompt:p,notify:notify,teacherMode:teacherMode,onSave:teacherMode?function(id,text){onSavePrompt(p.modId,id,text);}:null})
+      );
+    })
+  );
+}
+
+// ─── EXAM PAGE ────────────────────────────────────────────────
+function ExamPage({locked,completed,teacherMode}){
+  const [checks,setChecks]=useState((EXAM.deliverables||[]).map(function(){return false;}));
+  const [crits,setCrits]=useState((EXAM.criteria||[]).map(function(g){return (g.items||[]).map(function(){return false;});}));
+  var totalPts=(EXAM.criteria||[]).reduce(function(s,g){return s+(g.items||[]).reduce(function(ss,i){return ss+i.pts;},0);},0);
+  var earnedPts=(EXAM.criteria||[]).reduce(function(s,g,gi){return s+(g.items||[]).reduce(function(ss,item,ii){return ss+(crits[gi]&&crits[gi][ii]?item.pts:0);},0);},0);
+
+  if(locked&&!teacherMode){
+    return h('div',{className:'fade'},
+      h('div',{style:{background:'linear-gradient(135deg,var(--navy) 0%,#2A1B5C 100%)',borderRadius:14,padding:24,marginBottom:15}},h('div',{style:{fontSize:11,fontWeight:700,letterSpacing:2,color:'var(--amber)',marginBottom:6}},'ИТОГОВЫЙ МИНИ-ЗАЧЁТ'),h('h1',{style:{fontSize:18,fontWeight:800,color:'#fff',marginBottom:5}},EXAM.title),h('p',{style:{color:'var(--silver)',fontSize:13.5}},EXAM.description)),
+      h('div',{className:'card'},h(LockScreen,{title:'Зачёт заблокирован',sub:'Откроется после прохождения всех 4 модулей.',steps:MODULES.map(function(m){return {label:'Модуль '+m.num+': '+m.title+(completed[m.id]?' — ✅':' — ○'),done:completed[m.id]};})}))
+    );
+  }
+  return h('div',{className:'fade'},
+    h('div',{style:{background:'linear-gradient(135deg,var(--navy) 0%,#2A1B5C 100%)',borderRadius:14,padding:24,marginBottom:15}},
+      h('div',{style:{fontSize:11,fontWeight:700,letterSpacing:2,color:'var(--amber)',marginBottom:6}},'ИТОГОВЫЙ МИНИ-ЗАЧЁТ'),
+      h('h1',{style:{fontSize:18,fontWeight:800,color:'#fff',marginBottom:7}},EXAM.title),
+      h('p',{style:{color:'var(--silver)',fontSize:13.5,lineHeight:1.6,maxWidth:520,marginBottom:13}},EXAM.description),
+      h('div',{style:{display:'flex',gap:10,flexWrap:'wrap'}},
+        ...[['Макс.',EXAM.maxScore,'var(--amber)'],['Проходной',EXAM.passingScore,'var(--steel)'],['Набрано',earnedPts,earnedPts>=EXAM.passingScore?'#52C78A':'#E74C3C']].map(function(item){
+          return h('div',{key:item[0],style:{textAlign:'center',background:'rgba(255,255,255,.08)',borderRadius:10,padding:'9px 15px'}},h('div',{style:{fontFamily:'Bebas Neue,sans-serif',fontSize:30,color:item[2],lineHeight:1}},item[1]),h('div',{style:{fontSize:10,color:'var(--silver)'}},item[0]));
+        })
+      )
+    ),
+    h('div',{className:'card',style:{marginBottom:13}},
+      h('div',{style:{fontSize:13.5,fontWeight:700,marginBottom:12}},'📋 Ситуации зачёта'),
+      ...(EXAM.situations||[]).map(function(s){
+        return h('div',{key:s.num,style:{marginBottom:11,padding:12,border:'1.5px solid var(--border)',borderRadius:10,background:'var(--fog)'}},
+          h('div',{style:{display:'flex',alignItems:'center',gap:8,marginBottom:6}},h('div',{style:{width:24,height:24,borderRadius:'50%',background:'var(--navy)',color:'var(--amber)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,flexShrink:0}},s.num),h('strong',{style:{color:'var(--text)',fontSize:13}},s.title),h('div',{style:{marginLeft:'auto',display:'flex',gap:5}},...(s.tools||[]).map(function(t){return h(ToolBadge,{key:t,tool:t});}))),
+          h('p',{style:{fontSize:13,color:'var(--sub)',marginBottom:7,lineHeight:1.6}},s.text),
+          h('div',{style:{background:'rgba(37,99,168,.06)',borderRadius:7,padding:'8px 10px',fontSize:13,color:'var(--blue)',lineHeight:1.6,borderLeft:'3px solid var(--blue2)'}},h('strong',null,'Задача: '),s.task)
+        );
+      })
+    ),
+    h('div',{className:'card',style:{marginBottom:13}},
+      h('div',{style:{fontSize:13.5,fontWeight:700,marginBottom:10}},'📄 Результаты (8 документов)'),
+      ...(EXAM.deliverables||[]).map(function(d,i){
+        return h('div',{key:i,style:{display:'flex',alignItems:'center',gap:8,padding:'7px 10px',borderRadius:7,background:'var(--fog)',border:'1px solid var(--border)',marginBottom:5,cursor:'pointer'},onClick:function(){setChecks(function(prev){var n=prev.slice();n[i]=!n[i];return n;});}},
+          h('div',{style:{width:17,height:17,borderRadius:4,border:'2px solid '+(checks[i]?'var(--green)':'var(--border)'),flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,background:checks[i]?'var(--green)':'transparent',color:'#fff'}},checks[i]?'✓':''),
+          h('div',{style:{fontSize:13,color:checks[i]?'var(--green)':'var(--sub)',textDecoration:checks[i]?'line-through':'none'}},d)
+        );
+      }),
+      h('div',{style:{marginTop:7,fontSize:12.5,color:'var(--hint)'}},'Выполнено: ',checks.filter(Boolean).length,'/',EXAM.deliverables.length)
+    ),
+    h('div',{className:'card'},
+      h('div',{style:{fontSize:13.5,fontWeight:700,marginBottom:12}},'🏆 Критерии оценки'),
+      ...(EXAM.criteria||[]).map(function(group,gi){
+        return h('div',{key:gi,style:{marginBottom:12}},
+          h('div',{style:{fontSize:11,fontWeight:700,color:'var(--blue)',letterSpacing:1,textTransform:'uppercase',marginBottom:6,paddingBottom:5,borderBottom:'1px solid var(--border)'}},group.group),
+          ...(group.items||[]).map(function(item,ii){
+            return h('div',{key:ii,className:'cr',onClick:function(){setCrits(function(prev){var n=prev.map(function(g){return g.slice();});n[gi][ii]=!n[gi][ii];return n;});}},
+              h('div',{className:'cpts'},item.pts),
+              h('div',{style:{flex:1,fontSize:13,color:crits[gi]&&crits[gi][ii]?'var(--green)':'var(--sub)',textDecoration:crits[gi]&&crits[gi][ii]?'line-through':'none'}},item.text),
+              h('span',{style:{fontSize:14,color:crits[gi]&&crits[gi][ii]?'var(--green)':'var(--border)'}},crits[gi]&&crits[gi][ii]?'✓':'○')
+            );
+          })
+        );
+      }),
+      h('div',{style:{marginTop:12,padding:'12px 13px',borderRadius:10,background:earnedPts>=EXAM.passingScore?'rgba(26,127,75,.1)':'rgba(192,57,43,.07)',border:'1.5px solid '+(earnedPts>=EXAM.passingScore?'var(--green)':'var(--red)'),display:'flex',alignItems:'center',gap:10}},
+        h('div',{style:{fontFamily:'Bebas Neue,sans-serif',fontSize:30,color:earnedPts>=EXAM.passingScore?'var(--green)':'var(--red)',lineHeight:1}},earnedPts),
+        h('div',null,h('div',{style:{fontSize:13.5,fontWeight:700,color:earnedPts>=EXAM.passingScore?'var(--green)':'var(--red)'}},earnedPts,'/',totalPts,' — ',earnedPts>=EXAM.passingScore?'ЗАЧТЕНО ✓':'НЕ ЗАЧТЕНО ✗'),h('div',{style:{fontSize:12,color:'var(--sub)'}},'Проходной: ',EXAM.passingScore,'/',EXAM.maxScore,' (71%)'))
+      )
+    )
+  );
+}
+
+// ─── USERS VIEW ───────────────────────────────────────────────
+function UsersView(){
+  const [users,setUsers]=useState(function(){return LS.get(USERS_KEY,{});});
+  function refresh(){setUsers(LS.get(USERS_KEY,{}));}
+  function del(n){if(!window.confirm('Удалить «'+n+'»?'))return;var u=LS.get(USERS_KEY,{});delete u[n];LS.set(USERS_KEY,u);refresh();}
+  function resetP(n){if(!window.confirm('Сбросить прогресс «'+n+'»?'))return;var u=LS.get(USERS_KEY,{});if(u[n]){u[n].progress={m1:false,m2:false,m3:false,m4:false};}LS.set(USERS_KEY,u);refresh();}
+  var all=Object.values(users);
+  return h('div',{className:'fade'},
+    h('div',{style:{background:'linear-gradient(135deg,var(--teacher),#4A1B70)',borderRadius:14,padding:22,marginBottom:15}},
+      h('div',{style:{fontSize:28,marginBottom:6}},'👥'),
+      h('h1',{style:{fontSize:17,fontWeight:800,color:'#fff',marginBottom:4}},'Слушатели курса'),
+      h('p',{style:{color:'rgba(255,255,255,.75)',fontSize:13}},'Управление учётными записями и мониторинг прогресса.'),
+      h('div',{style:{marginTop:12,display:'flex',gap:10}},
+        ...[['Всего',all.length,'var(--amber)'],['Завершили',all.filter(function(u){var p=u.progress||{};return p.m1&&p.m2&&p.m3&&p.m4;}).length,'#52C78A'],['В процессе',all.filter(function(u){var p=u.progress||{};return (p.m1||p.m2||p.m3||p.m4)&&!(p.m1&&p.m2&&p.m3&&p.m4);}).length,'var(--steel)']].map(function(item){
+          return h('div',{key:item[0],style:{textAlign:'center',background:'rgba(255,255,255,.1)',borderRadius:8,padding:'8px 13px'}},h('div',{style:{fontFamily:'Bebas Neue,sans-serif',fontSize:24,color:item[2],lineHeight:1}},item[1]),h('div',{style:{fontSize:11,color:'rgba(255,255,255,.7)'}},item[0]));
+        })
+      )
+    ),
+    all.length===0
+      ?h('div',{className:'card',style:{textAlign:'center',padding:32}},h('div',{style:{fontSize:32,marginBottom:8,opacity:.4}},'👤'),h('div',{style:{fontSize:14,fontWeight:600,color:'var(--text)',marginBottom:4}},'Нет слушателей'),h('div',{style:{fontSize:13,color:'var(--sub)'}},'Появятся после регистрации.'))
+      :h('div',{className:'card'},
+        h('div',{style:{overflowX:'auto'}},
+          h('table',{className:'utable'},
+            h('thead',null,h('tr',null,...['Слушатель','М1','М2','М3','М4','Прогресс','Активность',''].map(function(hd){return h('th',{key:hd},hd);}))),
+            h('tbody',null,...all.map(function(u){
+              var p=u.progress||{};
+              var dn=[p.m1,p.m2,p.m3,p.m4].filter(Boolean).length;
+              return h('tr',{key:u.name},
+                h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:7}},h('div',{style:{width:25,height:25,borderRadius:'50%',background:'var(--navy)',color:'var(--amber)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,flexShrink:0}},u.name.slice(0,2).toUpperCase()),h('span',{style:{fontWeight:600,color:'var(--text)'}},u.name))),
+                ...(['m1','m2','m3','m4'].map(function(m){return h('td',{key:m,style:{textAlign:'center'}},p[m]?'✅':'○');})),
+                h('td',null,h('div',{style:{display:'flex',alignItems:'center',gap:7}},h('div',{style:{flex:1,height:5,background:'var(--mist)',borderRadius:3,overflow:'hidden'}},h('div',{style:{height:'100%',width:(dn/4*100)+'%',background:'linear-gradient(90deg,var(--blue),var(--amber))',borderRadius:3}})),h('span',{style:{fontSize:12,fontWeight:700,color:'var(--sub)',whiteSpace:'nowrap'}},dn,'/4'))),
+                h('td',{style:{fontSize:12,color:'var(--hint)',whiteSpace:'nowrap'}},u.active?new Date(u.active).toLocaleDateString('ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit'}):'—'),
+                h('td',null,h('div',{style:{display:'flex',gap:4}},h('button',{className:'btn bo bsm',onClick:function(){resetP(u.name);}},'↺'),h('button',{className:'btn bdr bsm',onClick:function(){del(u.name);}},'✕')))
+              );
+            }))
+          )
+        )
+      )
+  );
+}
+
+// ─── TEACHER DASHBOARD ────────────────────────────────────────
+function TeacherDashboard({completed,custom,onResetCustom,notify}){
+  return h('div',{className:'fade'},
+    h('div',{style:{background:'linear-gradient(135deg,var(--teacher),#4A1B70)',borderRadius:14,padding:22,marginBottom:15}},h('div',{style:{fontSize:28,marginBottom:6}},'⚙️'),h('h1',{style:{fontSize:17,fontWeight:800,color:'#fff',marginBottom:4}},'Настройки курса'),h('p',{style:{color:'rgba(255,255,255,.75)',fontSize:13}},'Управление контентом и настройками.')),
+    h('div',{className:'card',style:{marginBottom:13}},
+      h('div',{style:{fontSize:13.5,fontWeight:700,marginBottom:11,color:'var(--teacher)'}},'📊 Состояние модулей'),
+      h('div',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:9}},
+        ...MODULES.map(function(m){return h('div',{key:m.id,style:{padding:11,borderRadius:10,background:'var(--fog)',border:'1.5px solid '+(completed[m.id]?'var(--green)':'var(--border)'),display:'flex',alignItems:'center',gap:8}},h('span',{style:{fontSize:17}},completed[m.id]?'✅':'○'),h('div',null,h('div',{style:{fontSize:13,fontWeight:700,color:'var(--text)'}},'М',m.num,': ',m.title),h('div',{style:{fontSize:12,color:completed[m.id]?'var(--green)':'var(--hint)'}},completed[m.id]?'Сдан':'Не пройден')));})
+      )
+    ),
+    h('div',{className:'card'},
+      h('div',{style:{fontSize:13.5,fontWeight:700,marginBottom:11,color:'var(--teacher)'}},'⚙️ Управление'),
+      h('div',{style:{padding:12,borderRadius:10,background:'var(--fog)',border:'1px solid var(--border)'}},
+        h('div',{style:{fontSize:13,fontWeight:700,color:'var(--text)',marginBottom:4}},'Сбросить правки содержания'),
+        h('div',{style:{fontSize:12.5,color:'var(--sub)',marginBottom:8}},'Возвращает все отредактированные тексты и промты к исходным.'),
+        h('button',{className:'btn bo bsm',onClick:function(){if(window.confirm('Сбросить все правки?'))onResetCustom();}},'↺ Сбросить правки')
+      )
+    )
+  );
+}
+
+// ─── MAIN APP ─────────────────────────────────────────────────
+function App(){
+  const [session,setSession]=useState(function(){return LS.get(SESSION_KEY,null);});
+  if(!session)return h(AuthScreen,{onLogin:function(s){setSession(s);}});
+  return h(CourseApp,{session:session,onLogout:function(){LS.set(SESSION_KEY,null);setSession(null);}});
+}
+
+function CourseApp({session,onLogout}){
+  var isTeacher=session.isTeacher||false;
+  var username=session.username||'';
+
+  const [page,setPage]=useState('overview');
+  const [msg,setMsg]=useState('');
+  const [msgT,setMsgT]=useState(false);
+  const [sidebar,setSidebar]=useState(true);
+  const [completed,setCompleted]=useState(function(){
+    if(isTeacher)return {m1:true,m2:true,m3:true,m4:true};
+    var users=LS.get(USERS_KEY,{});
+    return (users[username]&&users[username].progress)||{m1:false,m2:false,m3:false,m4:false};
+  });
+  const [custom,setCustom]=useState(function(){return LS.get(CUSTOM_KEY,{});});
+
+  var allDone=completed.m1&&completed.m2&&completed.m3&&completed.m4;
+
+  function notify(text,t){setMsg(text);setMsgT(!!t);setTimeout(function(){setMsg('');setMsgT(false);},2400);}
+
+  function completeModule(modId){
+    if(isTeacher)return;
+    var next=Object.assign({},completed);next[modId]=true;
+    setCompleted(next);
+    var users=LS.get(USERS_KEY,{});
+    if(users[username]){users[username].progress=next;users[username].active=new Date().toISOString();LS.set(USERS_KEY,users);}
+  }
+
+  function saveCustomModule(modId,data){
+    var next=Object.assign({},custom);next[modId]=Object.assign({},custom[modId]||{},data);
+    setCustom(next);LS.set(CUSTOM_KEY,next);
+  }
+  function saveCustomPrompt(modId,promptId,text){
+    var ex=(custom[modId]&&custom[modId].prompts)||[];
+    var upd=ex.find(function(p){return p.id===promptId;})?ex.map(function(p){return p.id===promptId?Object.assign({},p,{text:text}):p;}):[].concat(ex,[{id:promptId,text:text}]);
+    var next=Object.assign({},custom);next[modId]=Object.assign({},custom[modId]||{},{prompts:upd});
+    setCustom(next);LS.set(CUSTOM_KEY,next);
+  }
+  function resetCustom(){setCustom({});LS.set(CUSTOM_KEY,{});notify('↺ Правки сброшены',true);}
+
+  function isModLocked(id){if(isTeacher)return false;var i=MODULES.findIndex(function(m){return m.id===id;});return i>0&&!completed[MODULES[i-1].id];}
+  var promptsLocked=!isTeacher&&!allDone;
+  var examLocked=!isTeacher&&!allDone;
+
+  function navigate(id){
+    if(!isTeacher){
+      var m=MODULES.find(function(m){return m.id===id;});
+      if(m&&isModLocked(m.id)){notify('🔒 Завершите предыдущий модуль');return;}
+      if(id==='prompts'&&promptsLocked){notify('🔒 Пройдите все 4 модуля');return;}
+      if(id==='exam'&&examLocked){notify('🔒 Пройдите все 4 модуля');return;}
+    }
+    setPage(id);
+  }
+
+  var done=Object.values(completed).filter(Boolean).length;
+
+  var navItems=[{id:'overview',label:'Обзор курса',icon:'🏠'}].concat(
+    MODULES.map(function(m,i){return {id:m.id,label:'М'+m.num+': '+m.title,icon:'M'+m.num,locked:isModLocked(m.id),done:completed[m.id]};}),
+    [{id:'prompts',label:'Банк промтов',icon:'⚡',locked:promptsLocked},{id:'exam',label:'Мини-зачёт',icon:'🏆',locked:examLocked}],
+    isTeacher?[{id:'users',label:'Слушатели',icon:'👥',tt:true},{id:'teacher',label:'Настройки',icon:'⚙️',tt:true}]:[]
+  );
+
+  var topTabs=[{id:'overview',label:'🏠'}].concat(
+    MODULES.map(function(m,i){return {id:m.id,label:'М'+m.num,locked:isModLocked(m.id)};}),
+    [{id:'prompts',label:'⚡ Промты',locked:promptsLocked},{id:'exam',label:'🏆 Зачёт',locked:examLocked}],
+    isTeacher?[{id:'users',label:'👥 Слушатели'},{id:'teacher',label:'⚙️ Настройки'}]:[]
+  );
+
+  function renderContent(){
+    if(page==='overview')return h(OverviewPage,{completed:completed,allDone:allDone,navigate:navigate,teacherMode:isTeacher,username:username});
+    if(page==='users'&&isTeacher)return h(UsersView,null);
+    if(page==='teacher'&&isTeacher)return h(TeacherDashboard,{completed:completed,custom:custom,onResetCustom:resetCustom,notify:notify});
+    if(page==='prompts')return h(PromptsPage,{locked:promptsLocked,completed:completed,teacherMode:isTeacher,custom:custom,onSavePrompt:saveCustomPrompt,notify:notify});
+    if(page==='exam')return h(ExamPage,{locked:examLocked,completed:completed,teacherMode:isTeacher});
+    var mi=MODULES.findIndex(function(m){return m.id===page;});
+    if(mi>=0){var mod=MODULES[mi];return h(ModuleView,{mod:mod,completed:completed[mod.id],onComplete:completeModule,isLocked:isModLocked(mod.id),nextMod:MODULES[mi+1]||null,teacherMode:isTeacher,custom:custom,onSaveCustom:saveCustomModule,onSavePrompt:saveCustomPrompt,notify:notify});}
+    return h(OverviewPage,{completed:completed,allDone:allDone,navigate:navigate,teacherMode:isTeacher,username:username});
+  }
+
+  return h('div',{style:{height:'100%',display:'flex',flexDirection:'column'}},
+    h(Notif,{msg:msg,teacher:msgT}),
+    h('div',{className:'bar'+(isTeacher?' t':'')},
+      h('div',{className:'logo'+(isTeacher?' t':'')},'ИИ',h('span',null,'в'),'ПТО'),
+      h('div',{className:'vsep'}),
+      h('div',{className:'tabs'},
+        ...topTabs.map(function(t){return h('button',{key:t.id,className:'tab'+(page===t.id?' on'+(isTeacher?' t':''):'')+(t.locked?' off':''),title:t.locked?'Заблокировано':'',onClick:function(){navigate(t.id);}},t.label,t.locked?' 🔒':'');})
+      ),
+      h('div',{className:'rbar'},
+        h('div',{className:'pill'},h('div',{className:'dot',style:{background:isTeacher?'var(--teacher2)':allDone?'var(--green)':'var(--amber)'}}),(isTeacher?'Препод.':username.split(' ')[0]).slice(0,10)),
+        !isTeacher&&h('div',{className:'pill',style:{color:'var(--amber)'}},done,'/4'),
+        h('button',{className:'ibtn',title:'Печать',onClick:function(){window.print();}},'🖨'),
+        h('button',{className:'ibtn',title:'Выйти',onClick:onLogout,style:{fontSize:13}},'🚪'),
+        h('button',{className:'ibtn',onClick:function(){setSidebar(!sidebar);}},'☰')
+      )
+    ),
+    h('div',{className:'main'},
+      sidebar&&h('div',{className:'side'+(isTeacher?' t':'')},
+        h('div',{style:{padding:'9px 7px 5px'}},
+          h('div',{style:{display:'flex',justifyContent:'space-between',fontSize:11,color:'var(--silver)',marginBottom:4}},
+            h('span',null,isTeacher?'Преподаватель':(username.length>14?username.slice(0,13)+'…':username)),
+            h('span',{style:{fontWeight:700,color:isTeacher?'var(--teacher2)':'var(--amber)'}},isTeacher?'Полный':(done+'/4'))
+          ),
+          h('div',{className:'pbar'},h('div',{className:'pfill'+(isTeacher?' t':''),style:{width:(isTeacher?100:done/4*100)+'%'}}))
+        ),
+        h('div',{className:'ssep'}),
+        ...navItems.map(function(item){
+          return h('button',{key:item.id,className:'sitem'+(page===item.id?(item.tt?' ton':' on'):'')+(item.locked?' lk':''),onClick:function(){navigate(item.id);}},
+            h('span',{style:{fontSize:12,fontWeight:700,color:item.done?'var(--green)':page===item.id?'var(--amber)':'var(--hint)',width:18,textAlign:'center',flexShrink:0}},item.icon),
+            h('span',{style:{flex:1,fontSize:12.5}},item.label),
+            item.locked&&h('span',{style:{fontSize:10,opacity:.5}},'🔒'),
+            item.done&&!item.locked&&h('span',{style:{fontSize:11,color:'var(--green)'}},'✅')
+          );
+        }),
+        h('div',{className:'ssep'}),
+        ...Object.entries(TOOLS).slice(0,4).map(function(entry){var k=entry[0],v=entry[1];return h('div',{key:k,className:'sitem',style:{cursor:'default'}},h('div',{style:{width:7,height:7,borderRadius:'50%',background:v.dot,flexShrink:0}}),h('span',{style:{fontSize:12}},v.name));}),
+        h('div',{className:'ssep'}),
+        h('div',{style:{padding:'6px 5px'}},
+          h('div',{style:{background:'rgba(232,114,12,.1)',borderRadius:9,padding:9,border:'1px solid rgba(232,114,12,.2)'}},
+            h('div',{style:{fontSize:10,fontWeight:700,color:'var(--amber)',marginBottom:4}},'⚠ ПРИНЦИП «4 ГЛАЗА»'),
+            h('div',{style:{fontSize:11,color:'var(--silver)',lineHeight:1.5}},'AI-документ проверяют минимум два специалиста перед подписанием.')
+          )
+        )
+      ),
+      h('div',{className:'content'},renderContent())
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(h(App,null));
+
+</script>
+</body>
+</html>
